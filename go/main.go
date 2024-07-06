@@ -24,7 +24,9 @@ type Product struct {
 }
 
 type RestResult struct {
+	Result  string `json:"result"`
 	Message string `json:"message"`
+	Error   string `json:"error"`
 }
 
 type ItemsRequest map[string]int
@@ -70,27 +72,33 @@ func postCheckout(c *gin.Context) {
 	err := c.Request.ParseForm()
 	if err != nil {
 		logrus.Errorf("Error parsing form, %v", err)
-		c.IndentedJSON(http.StatusInternalServerError, RestResult{Message: "Failed"})
+		c.IndentedJSON(http.StatusOK, RestResult{Result: "Failed", Message: "Error parsing form "})
 	}
 
 	var itemsRequest ItemsRequest
 	if err := c.BindJSON(&itemsRequest); err != nil {
 		logrus.Errorf("Error binding request, %v", err)
-		c.IndentedJSON(http.StatusInternalServerError, RestResult{Message: "Failed"})
+		c.IndentedJSON(http.StatusOK, RestResult{Result: "Failed", Message: "Error binding request."})
 	}
 
+	var totalAmount = 0
 	for key, value := range itemsRequest {
 		logrus.Infof("req: %+v => %+v", key, value)
 		var productId string = key
 		var amount int = value
 		if amount > 0 {
+			totalAmount += amount
 			logrus.Infof("productId: %s->%d", productId, amount)
 
 			// TODO: ship the product
 		}
 	}
 
-	c.IndentedJSON(http.StatusOK, RestResult{Message: "Success"})
+	if totalAmount > 0 {
+		c.IndentedJSON(http.StatusOK, RestResult{Result: "Success", Message: "Thank you for purchasing!"})
+	} else {
+		c.IndentedJSON(http.StatusOK, RestResult{Result: "Failed", Message: "Your cart is empty."})
+	}
 }
 
 func main() {

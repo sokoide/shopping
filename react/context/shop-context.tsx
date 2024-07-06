@@ -125,9 +125,15 @@ export const ShopContextProvider = (props) => {
             .then((res) => res.json())
             .then((json) => {
                 console.log("json: %O", json);
+                if (json.result === "Success") {
+                    clearCart();
+                    // TODO: show thank you message
+                    alert(json.message);
+                } else {
+                    // TODO: show error message
+                    alert("failed: " + json.message + "\nerror: " + json.error);
+                }
             });
-        // TODO: clear if the checkout was successful, otherwise show error
-        // setCartItems(emptyCart());
     };
 
     const login = (username) => {
