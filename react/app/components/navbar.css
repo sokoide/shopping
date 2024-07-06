@@ -7,7 +7,7 @@
 }
 
 .links {
-    margin-right: 50px;
+    /* margin-right: 50px; */
     display: flex;
     align-items: center;
 }
@@ -22,4 +22,12 @@
     color: white;
     margin-left: 20px;
     font-size: 20px;
+}
+
+.user {
+    font-size: 40px;
+    position: absolute;
+    right: 0px;
+    margin-right: 20px;
+    display: flex;
 }

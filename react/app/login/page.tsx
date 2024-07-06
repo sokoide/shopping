@@ -1,36 +1,35 @@
 "use client";
 
-import React, { useState } from "react";
-import "./contact.css";
+import React, { useState, useContext } from "react";
+import { ShopContext } from "@/context/shop-context";
+import "./login.css";
 
-const Contact = () => {
+
+const Login = () => {
+    const { loginInfo, login, logout } = useContext(ShopContext);
+
     const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [isLogin, setIsLogin] = useState(false);
+    // const [loggedIn, setLoggedIn] = useState(false);
 
     const handleUsername = (e) => {
         setUsername(e.target.value);
     };
 
-    const handlePassword = (e) => {
-        setPassword(e.target.value);
-    };
-
     const handleLogin = () => {
-        if (username === "" || password === "") return;
-        setIsLogin(true);
-    };
+        if (username === "") return;
+        login(username);
+        window.location.href = "/";
+    }
 
     const handleLogout = () => {
         setUsername("");
-        setPassword("");
-        setIsLogin(false);
+        logout();
     };
 
     return (
         <div className="wrapper">
             <div className="content">
-                {isLogin ? (
+                {loginInfo.loggedIn ? (
                     <button className="button" onClick={handleLogout}>
                         logout
                     </button>
@@ -46,16 +45,6 @@ const Contact = () => {
                                 onChange={handleUsername}
                             />
                         </div>
-                        <div className="input">
-                            Password:
-                            <input
-                                type="password"
-                                name="password"
-                                id="password"
-                                className="password"
-                                onChange={handlePassword}
-                            />
-                        </div>
                         <button className="button" onClick={handleLogin}>
                             login
                         </button>
@@ -66,4 +55,4 @@ const Contact = () => {
     );
 };
 
-export default Contact;
+export default Login;

@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from './components/navbar';
 import { ShopContextProvider} from "@/context/shop-context";
+
+import dynamic from "next/dynamic";
+
+// import Navbar from './components/navbar';
+// disable SSR
+// https://nextjs.org/docs/messages/react-hydration-error
+const Navbar = dynamic(() => import("./components/navbar"), { ssr: false });
 
 const inter = Inter({ subsets: ["latin"] });
 

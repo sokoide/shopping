@@ -29,10 +29,23 @@ const getCart = () => {
     return items;
 };
 
+const getLoginInfo = () => {
+    let loginInfo = {};
+
+    if (typeof window !== "undefined") {
+        const storedLoginInfo = localStorage.getItem("loginInfo");
+        return storedLoginInfo ? JSON.parse(storedLoginInfo) : loginInfo;
+    }
+    console.log("getLoginInfo: window NOT available, using the empty login info");
+    return loginInfo;
+};
+
 export const ShopContextProvider = (props) => {
+    // *** states ***
+    // state: items (products)
     const [items, setItems] = useState([]);
     useEffect(() => {
-        console.log( "fetching products from %O", productUrl);
+        console.log("fetching products from %O", productUrl);
         fetch(productUrl)
             .then((res) => res.json())
             .then((json) => {
@@ -40,24 +53,35 @@ export const ShopContextProvider = (props) => {
             });
     }, []);
 
+    // state: cartItems
     const [cartItems, setCartItems] = useState(getCart());
-    // save cart to localStorage whenever it changes
+    // save cart in localStorage whenever it changes
     useEffect(() => {
         console.log("saving cartItems %O in localStorage", cartItems);
         localStorage.setItem("cartItems", JSON.stringify(cartItems));
     }, [cartItems]);
 
+    // state: loginInfo
+    const [loginInfo, setLoginInfo] = useState(getLoginInfo());
+    // save loginInfo in localStorage whenever it changes
+    useEffect(() => {
+        console.log("saving loginInfo %O in localStorage", loginInfo);
+        localStorage.setItem("loginInfo", JSON.stringify(loginInfo));
+    }, [loginInfo]);
+
+    // *** functions ***
     const getTotalCartAmount = () => {
         let totalAmount = 0;
         console.log("cart items: %O", cartItems);
         for (const item in cartItems) {
-            console.log("item: %O", item);
             if (cartItems[item] > 0) {
                 let itemInfo = items.find(
                     (product) => product.id === Number(item)
                 );
                 if (itemInfo === undefined) {
-                    console.error( "itemInfo is null. Will be recalculated when items are set");
+                    console.error(
+                        "itemInfo is null. Will be recalculated when items are set"
+                    );
                     return 0;
                 } else {
                     totalAmount += cartItems[item] * itemInfo.price;
@@ -82,33 +106,52 @@ export const ShopContextProvider = (props) => {
         setCartItems((prev) => ({ ...prev, [itemId]: newAmount }));
     };
 
-    const emptyCart = () => {
-        console.log("emtpyCart");
+    const clearCart = () => {
+        console.log("clearCart");
         setCartItems(emptyCart());
     };
 
     const checkout = () => {
         console.log("checkout");
-        console.log( "checking out at %O with %O", checkoutUrl, JSON.stringify(cartItems));
+        console.log(
+            "checking out at %O with %O",
+            checkoutUrl,
+            JSON.stringify(cartItems)
+        );
         fetch(checkoutUrl, {
-            method:"POST",
-            body: JSON.stringify(cartItems)
+            method: "POST",
+            body: JSON.stringify(cartItems),
         })
             .then((res) => res.json())
             .then((json) => {
                 console.log("json: %O", json);
             });
+        // TODO: clear if the checkout was successful, otherwise show error
         // setCartItems(emptyCart());
+    };
+
+    const login = (username) => {
+        console.log("login(%O)", username);
+        setLoginInfo((prev) => ({...prev, loggedIn: true, username: username }));
+    };
+
+    const logout = () => {
+        console.log("logout");
+        setLoginInfo((prev) => ({...prev, loggedIn: false, username: "" }));
     };
 
     const contextValue = {
         items,
         cartItems,
+        loginInfo,
         getTotalCartAmount,
         addToCart,
         removeFromCart,
         updateCartItemCount,
+        clearCart,
         checkout,
+        login,
+        logout,
     };
     return (
         <ShopContext.Provider value={contextValue}>

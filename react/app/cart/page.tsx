@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useContext } from "react";
+import React, { use, useContext } from "react";
 import "./cart.css";
 import CartItem from "./cartItem";
 import { ShopContext } from "@/context/shop-context";
+import Link from "next/link";
 
 const Cart = () => {
-    const { items, cartItems, getTotalCartAmount, emptyCart, checkout } =
+    const { items, cartItems, getTotalCartAmount, clearCart, checkout, loginInfo } =
         useContext(ShopContext);
     const totalAmount = Math.round(getTotalCartAmount() * 100) / 100;
+
 
     return (
         <div className="cart">
@@ -26,6 +28,8 @@ const Cart = () => {
             {totalAmount > 0 ? (
                 <div className="checkout">
                     <p className="total">Total: ${totalAmount}</p>
+
+                    {loginInfo.loggedIn ? (
                     <button
                         onClick={() => {
                             checkout();
@@ -33,9 +37,19 @@ const Cart = () => {
                     >
                         Checkout
                     </button>
+                    ) : (
+                        <button
+                            onClick={() => {
+                                window.location.href = "/login";
+                            }}
+                        >
+                            Login
+                        </button>
+                    )}
+
                     <button
                         onClick={() => {
-                            emptyCart();
+                            clearCart();
                         }}
                     >
                         Empty Cart
