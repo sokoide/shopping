@@ -5,7 +5,9 @@ import { createContext, useEffect, useState } from "react";
 export const ShopContext = createContext(null);
 
 //const productUrl = "https://fakestoreapi.com/products";
-const productUrl = "http://localhost:8080/products";
+const baseUrl = "http://localhost:8080";
+const productUrl = baseUrl + "/products";
+const checkoutUrl = baseUrl + "/checkout";
 
 const emptyCart = () => {
     const productsLength = 20;
@@ -80,9 +82,23 @@ export const ShopContextProvider = (props) => {
         setCartItems((prev) => ({ ...prev, [itemId]: newAmount }));
     };
 
+    const emptyCart = () => {
+        console.log("emtpyCart");
+        setCartItems(emptyCart());
+    };
+
     const checkout = () => {
         console.log("checkout");
-        setCartItems(emptyCart());
+        console.log( "checking out at %O with %O", checkoutUrl, JSON.stringify(cartItems));
+        fetch(checkoutUrl, {
+            method:"POST",
+            body: JSON.stringify(cartItems)
+        })
+            .then((res) => res.json())
+            .then((json) => {
+                console.log("json: %O", json);
+            });
+        // setCartItems(emptyCart());
     };
 
     const contextValue = {

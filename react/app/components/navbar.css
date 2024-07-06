@@ -3,7 +3,6 @@
     height: 80px;
     background-color: rgb(19, 19, 19);
     display: flex;
-    justify-content: flex-end;
     align-items: center;
 }
 
@@ -13,9 +12,14 @@
     align-items: center;
 }
 
+.links :hover {
+    color: lightcoral;
+    font-size: 22px;
+}
+
 .links a {
     text-decoration: none;
     color: white;
     margin-left: 20px;
-    font-size: 25px;
+    font-size: 20px;
 }

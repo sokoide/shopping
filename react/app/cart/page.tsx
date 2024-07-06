@@ -6,7 +6,7 @@ import CartItem from "./cartItem";
 import { ShopContext } from "@/context/shop-context";
 
 const Cart = () => {
-    const { items, cartItems, getTotalCartAmount, checkout } =
+    const { items, cartItems, getTotalCartAmount, emptyCart, checkout } =
         useContext(ShopContext);
     const totalAmount = Math.round(getTotalCartAmount() * 100) / 100;
 
@@ -29,6 +29,13 @@ const Cart = () => {
                     <button
                         onClick={() => {
                             checkout();
+                        }}
+                    >
+                        Checkout
+                    </button>
+                    <button
+                        onClick={() => {
+                            emptyCart();
                         }}
                     >
                         Empty Cart
