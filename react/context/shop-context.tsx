@@ -5,9 +5,10 @@ import { createContext, useEffect, useState } from "react";
 export const ShopContext = createContext(null);
 
 //const productUrl = "https://fakestoreapi.com/products";
-const baseUrl = "http://localhost:8080";
-const productUrl = baseUrl + "/products";
-const checkoutUrl = baseUrl + "/checkout";
+const baseGoUrl = "http://localhost:8080";
+const baseCsUrl = "http://localhost:5142";
+const productUrl = baseCsUrl + "/products/";
+const checkoutUrl = baseGoUrl + "/checkout";
 
 const emptyCart = () => {
     const productsLength = 20;
