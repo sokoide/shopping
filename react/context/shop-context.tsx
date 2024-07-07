@@ -4,11 +4,10 @@ import { createContext, useEffect, useState } from "react";
 // global props with the default values
 export const ShopContext = createContext(null);
 
-//const productUrl = "https://fakestoreapi.com/products";
-const baseGoUrl = "http://localhost:8080";
+// const baseGoUrl = "http://localhost:8080";
 const baseCsUrl = "http://localhost:5142";
 const productUrl = baseCsUrl + "/products/";
-const checkoutUrl = baseGoUrl + "/checkout";
+const checkoutUrl = baseCsUrl + "/checkout";
 
 const emptyCart = () => {
     const productsLength = 20;

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-class Product
+public class Product
 {
     [JsonPropertyName("id")]
     public int ID { get; set; }

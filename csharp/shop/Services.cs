@@ -32,7 +32,20 @@ class Services
             };
             return products;
         })
-        .WithName("GetProducts")
+        .WithName("Products")
         .WithOpenApi();
+
+        //type ItemsRequest map[string]int
+        app.MapPost("/checkout", async (Dictionary<string, int> items) =>
+        {
+            foreach (var item in items)
+            {
+                Console.WriteLine("Product: {0}, Quantity: {1}", item.Key, item.Value);
+            };
+            // TODO: ship the products
+            return await Task.FromResult(Results.Json(new RestResult("success", "Thank you for purchasing!", "")));
+        })
+       .WithName("Checkout")
+       .WithOpenApi();
     }
 }

@@ -4,3 +4,13 @@ GET {{shop_HostAddress}}/products/
 Accept: application/json
 
 ###
+
+POST {{shop_HostAddress}}/checkout/
+Content-Type: application/json
+Accept: application/json
+
+{
+    "1": 0,
+    "2": 3,
+    "3": 4
+}
