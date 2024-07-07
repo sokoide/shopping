@@ -40,7 +40,10 @@ class Services
         {
             Log.Information("/login {0}", username);
 
-            var result = Globals.BreakLogin.Get() ? new RestResult("Failure", "Login service is broken", "") : new RestResult("Success", "", "");
+            int flagid = Globals.GetFlagId("login");
+            AtomicBoolean flag = Globals.BreakFlags[flagid];
+
+            var result = flag.Get() ? new RestResult("Failure", "Login service is broken", "") : new RestResult("Success", "", "");
             return Results.Json(result);
         })
         .WithName("Login")
@@ -48,29 +51,42 @@ class Services
     }
     private void ConfigureChaosMonkeyService(WebApplication app)
     {
-        // login
-        app.MapGet("/break/login", () =>
+        ConfigureBreakHandlers("login", app);
+    }
+
+    private void ConfigureBreakHandlers(string feature, WebApplication app)
+    {
+        app.MapGet("/break/" + feature, () =>
         {
-            Log.Information("/break/login");
-            Globals.BreakLogin.Set(true);
+            int flagid = Globals.GetFlagId(feature);
+            AtomicBoolean flag = Globals.BreakFlags[flagid];
+
+            Log.Information("/break/" + feature);
+            flag.Set(true);
             return Results.StatusCode(200);
         })
-        .WithName("break/login")
+        .WithName("break/" + feature)
         .WithOpenApi();
 
-        app.MapGet("/fix/login", () =>
+        app.MapGet("/fix/" + feature, () =>
         {
-            Log.Information("/fix/login");
-            Globals.BreakLogin.Set(false);
+            int flagid = Globals.GetFlagId(feature);
+            AtomicBoolean flag = Globals.BreakFlags[flagid];
+
+            Log.Information("/fix/" + feature);
+            flag.Set(false);
             return Results.StatusCode(200);
         })
-        .WithName("fix/login")
+        .WithName("fix/" + feature)
         .WithOpenApi();
 
-        app.MapGet("/status/login", () =>
+        app.MapGet("/status/" + feature, () =>
         {
-            Log.Information("/status/login");
-            bool value = Globals.BreakLogin.Get();
+            int flagid = Globals.GetFlagId(feature);
+            AtomicBoolean flag = Globals.BreakFlags[flagid];
+
+            Log.Information("/status/" + feature);
+            bool value = flag.Get();
             if (value)
             {
                 return Results.Ok("Broken");
@@ -80,7 +96,7 @@ class Services
                 return Results.Ok("Operational");
             }
         })
-        .WithName("status/login")
+        .WithName("status/" + feature)
         .WithOpenApi();
     }
 }

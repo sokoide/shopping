@@ -9,6 +9,9 @@ using OpenTelemetry.Metrics;
 using Serilog;
 using Serilog.Sinks.OpenTelemetry;
 
+// Globals
+Globals.Init();
+
 // Configure Serilog & OTLP logging
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
