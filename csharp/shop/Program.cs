@@ -1,4 +1,26 @@
 using Microsoft.Extensions.FileProviders;
+using OpenTelemetry;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
+using Serilog;
+using Serilog.Sinks.OpenTelemetry;
+
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.OpenTelemetry(options =>
+    {
+        options.Endpoint = "http://localhost:4318/v1/logs";
+        options.Protocol = OtlpProtocol.HttpProtobuf;
+        options.ResourceAttributes = new Dictionary<string, object>
+        {
+            ["service.name"] = "Nintenbo-backend"
+        };
+    })
+    // .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+Log.Information("Starting up");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,3 +64,5 @@ if (app.Environment.IsDevelopment())
 
 Services services = new Services();
 services.Run(app);
+
+Log.CloseAndFlush();

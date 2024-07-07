@@ -1,3 +1,5 @@
+using Serilog;
+
 class Services
 {
     public void Run(WebApplication app)
@@ -11,6 +13,8 @@ class Services
         const string baseUrl = "http://scottmm.local:5142/";
         app.MapGet("/products", () =>
         {
+            Log.Information("/products");
+
             var products = new[]{
                 new Product(1, "Mario", 10.0, "Cheerful, mustached Italian plumber known for his red hat and blue overalls, who embarks on adventurous quests to rescue Princess Peach from various villains, primarily Bowser.", "Mario's family", baseUrl + "static/Slice 1.png"),
                 new Product(2, "Luigi", 10.0, "Mario's taller, younger brother, known for his green hat and overalls, who often accompanies Mario on adventures, displaying bravery despite his more timid and cautious nature.", "Mario's family", baseUrl + "static/Slice 2.png"),
@@ -29,6 +33,7 @@ class Services
                 new Product(15, "Boo", 9.50, "Ghostly enemy known for its shy behavior, covering its face when looked at directly, and its mischievous nature, often haunting Mario and his friends in spooky environments.", "Bowser's family", baseUrl + "static/Slice 15.png"),
                 new Product(16, "Goomba", 9.50, "Small, brown, mushroom-like enemy with a frowning face and tiny feet, known for being one of the most common and easily defeated adversaries in Mario's adventures.", "Bowser's family", baseUrl + "static/Slice 16.png"),
                 new Product(17, "Maskass", 9.50, "Also known as Shy Guy, is a small, masked character with a simple robe and a timid demeanor, often seen working for Bowser or other villains and causing trouble for Mario and his friends.", "Bowser's family", baseUrl + "static/Slice 17.png"),
+                new Product(18, "Dry Bones", 9.50, "Skeletal Koopa Troopa, often found in castles and haunted environments, known for collapsing into a pile of bones when defeated and reassembling itself shortly afterward to continue pursuing Mario.", "Bowser's family", baseUrl + "static/Slice 18.png"),
             };
             return products;
         })
@@ -38,6 +43,7 @@ class Services
         //type ItemsRequest map[string]int
         app.MapPost("/checkout", async (Dictionary<string, int> items) =>
         {
+            Log.Information("/checkout");
             foreach (var item in items)
             {
                 Console.WriteLine("Product: {0}, Quantity: {1}", item.Key, item.Value);
