@@ -4,7 +4,9 @@ public class Consts
     public const string OTLP_GRPC_ENDPOINT = "http://localhost:4317/";
     public const string OTLP_HTTP_ENDPOINT = "http://localhost:4318/";
     public static string[] CORS_ORIGINS = new[] { "http://localhost:3000", "http://scottmm.local:3000" };
+    public const int WEBAPI_PORT = 15001;
     private const string ImageBaseUrl = "http://scottmm.local:15001/";
+
 
     private static Product[] products = new[]{
         new Product(1, "Mario", 10.0, "Cheerful, mustached Italian plumber known for his red hat and blue overalls, who embarks on adventurous quests to rescue Princess Peach from various villains, primarily Bowser.", "Mario's family", ImageBaseUrl + "static/Slice 1.png"),

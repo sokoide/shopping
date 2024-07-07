@@ -1,4 +1,6 @@
 using Serilog;
+using System.Text.Json;
+using System.Text;
 
 class Services
 {
@@ -11,6 +13,16 @@ class Services
 
     private void ConfigureShopService(WebApplication app)
     {
+        // reset
+        app.MapGet("/reset", () =>
+        {
+            Log.Information("/reset");
+            Globals.Reset();
+            return Results.Json(new RestResult("Success", "", ""));
+        })
+       .WithName("Reset")
+       .WithOpenApi();
+
         // products
         app.MapGet("/products", () =>
         {
@@ -19,8 +31,12 @@ class Services
             int flagid = Globals.GetFlagId("products");
             AtomicBoolean flag = Globals.BreakFlags[flagid];
 
-            var result = flag.Get() ? null : Consts.GetProducts();
-            return result;
+            if (flag.Get() == true)
+            {
+                Log.Error("product service is broken");
+                return null;
+            }
+            return Consts.GetProducts();
         })
         .WithName("Products")
         .WithOpenApi();
@@ -42,11 +58,51 @@ class Services
                         Log.Information("{0} bought productid:{1}, product:{2}, quantity:{3}", req.username, item.Key, Consts.GetProductName(item.Key), item.Value);
                     }
                 };
-                // TODO: ship the products
-                return await Task.FromResult(Results.Json(new RestResult("Success", "Thank you for purchasing!", "")));
+                // ship the products
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        string url = string.Format("http://localhost:{0}/delivery", Consts.WEBAPI_PORT);
+
+                        // Make the GET request
+                        string jsonData = JsonSerializer.Serialize(req);
+                        HttpContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+
+                        Log.Information("Calling {0} with {1}", url, jsonData);
+                        HttpResponseMessage response = await client.PostAsync(url, content);
+
+                        // Ensure the request was successful
+                        response.EnsureSuccessStatusCode();
+
+                        // Read the response content
+                        string responseBody = await response.Content.ReadAsStringAsync();
+
+                        // Process the response (e.g., print it to the console)
+                        Console.WriteLine(responseBody);
+
+                        RestResult? res = JsonSerializer.Deserialize<RestResult>(responseBody);
+                        if (res == null)
+                        {
+                            Log.Error("Unexpected response from delivery service");
+                            return await Task.FromResult(Results.Json(new RestResult("Failure", "Failed in delivery", "res is null")));
+                        }
+                        else if (res.Result != "Success")
+                        {
+                            return await Task.FromResult(Results.Json(res));
+                        }
+                        return await Task.FromResult(Results.Json(new RestResult("Success", "Thank you for purchasing!", "")));
+                    }
+                    catch (HttpRequestException e)
+                    {
+                        Log.Error("Failed in delivery. Err: {Message}", e.Message);
+                        return await Task.FromResult(Results.Json(new RestResult("Failure", "Failed in delivery", e.Message)));
+                    }
+                }
             }
             else
             {
+                Log.Error("checkout service is broken");
                 return await Task.FromResult(Results.Json(new RestResult("Failure", "Checkout service is broken", "")));
             }
         })
@@ -61,10 +117,42 @@ class Services
             int flagid = Globals.GetFlagId("login");
             AtomicBoolean flag = Globals.BreakFlags[flagid];
 
-            var result = flag.Get() ? new RestResult("Failure", "Login service is broken", "") : new RestResult("Success", "", "");
-            return Results.Json(result);
+            if (flag.Get() == true)
+            {
+                Log.Error("delivery service is broken");
+                return Results.Json(new RestResult("Failure", "Login service is broken", ""));
+            }
+            return Results.Json(new RestResult("Success", "", ""));
         })
         .WithName("Login")
+        .WithOpenApi();
+
+        // delivery
+        app.MapPost("/delivery", async (CheckoutRequest req) =>
+        {
+            Log.Information("/delivery by {0}", req.username);
+
+            int flagid = Globals.GetFlagId("delivery");
+            AtomicBoolean flag = Globals.BreakFlags[flagid];
+
+            if (flag.Get() == false)
+            {
+                foreach (var item in req.cartItems)
+                {
+                    if (item.Value > 0)
+                    {
+                        Log.Information("{0} requested delivery for productid:{1}, product:{2}, quantity:{3}", req.username, item.Key, Consts.GetProductName(item.Key), item.Value);
+                    }
+                };
+                return await Task.FromResult(Results.Json(new RestResult("Success", "Delivery successful", "")));
+            }
+            else
+            {
+                Log.Error("delivery service is broken");
+                return await Task.FromResult(Results.Json(new RestResult("Failure", "Delivery service is broken", "")));
+            }
+        })
+        .WithName("Delivery")
         .WithOpenApi();
 
         // service status

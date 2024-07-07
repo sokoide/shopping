@@ -4,6 +4,10 @@
 GET {{shop_HostAddress}}/status/
 Accept: application/json
 
+### Reset
+GET {{shop_HostAddress}}/reset/
+Accept: application/json
+
 ### Login
 GET {{shop_HostAddress}}/login?username="sokoide@ms.com"
 Accept: application/json

@@ -26,4 +26,12 @@ public class Globals
             BreakFlags[i] = new AtomicBoolean(false);
         }
     }
+
+    public static void Reset()
+    {
+        for (int i = 0; i < Flags.Length; i++)
+        {
+            BreakFlags[i].Set(false);
+        }
+    }
 }
