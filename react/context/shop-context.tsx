@@ -13,7 +13,7 @@ const serviceStatusUrl = baseCsUrl + "/status/";
 const serviceBreakUrl = baseCsUrl + "/break/";
 const serviceFixUrl = baseCsUrl + "/fix/";
 const features : string[] = ["login", "products", "checkout", "delivery"];
-// const monkeyTimer: number = -1;
+const monkeyTimer: number = -1;
 
 const emptyCart = () => {
     const productsLength = 20;
@@ -120,7 +120,7 @@ export const ShopContextProvider = (props) => {
     }, [serviceStatus]);
 
     // state: monkeyTimer
-    // const [monkeyTimer, setMonkeyTimer] = useState(-1);
+    const [monkeyTimer, setMonkeyTimer] = useState(-1);
 
     // *** functions ***
     const getTotalCartAmount = () => {
@@ -239,10 +239,10 @@ export const ShopContextProvider = (props) => {
         }
     };
 
-    // const updateMonkeyTimer = (id: number) => {
-    //     console.log("updateMonkeyTimer(%O)", id);
-    //     setMonkeyTimer(id);
-    // }
+    const updateMonkeyTimer = (id: number) => {
+        console.log("updateMonkeyTimer(%O)", id);
+        setMonkeyTimer(id);
+    }
 
     const refreshStatus = () => {
         console.log("fetching service status from %O", serviceStatusUrl);
@@ -259,7 +259,7 @@ export const ShopContextProvider = (props) => {
         loginInfo,
         serviceStatus,
         features,
-        // monkeyTimer,
+        monkeyTimer,
         getTotalCartAmount,
         addToCart,
         removeFromCart,
@@ -269,7 +269,7 @@ export const ShopContextProvider = (props) => {
         login,
         logout,
         updateServiceStatus,
-        // updateMonkeyTimer,
+        updateMonkeyTimer,
         refreshStatus,
     };
     return (

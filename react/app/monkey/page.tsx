@@ -22,28 +22,28 @@ const Monkey = () => {
     const {
         serviceStatus,
         updateServiceStatus,
-        // features,
-        // monkeyTimer,
-        // updateMonkeyTimer,
+        features,
+        monkeyTimer,
+        updateMonkeyTimer,
         refreshStatus,
     } = useContext(ShopContext);
     var initialized: boolean = false;
 
     const toggleFeature = (feature: string) => {
-        // if (feature == "random") {
-        //     console.log("random");
-        //     if (monkeyTimer < 0){
-        //         console.log("monkeyTimer: %O", monkeyTimer);
-        //         const id = startMonkeyTimer();
-        //         updateMonkeyTimer(id);
-        //         console.log("monkeyTimer: %O", id);
-        //     } else {
-        //         console.log("timer available");
-        //         clearInterval(monkeyTimer);
-        //         updateMonkeyTimer(-1);
-        //     }
-        //     return;
-        // }
+        if (feature == "random") {
+            console.log("random");
+            if (monkeyTimer < 0){
+                console.log("monkeyTimer: %O", monkeyTimer);
+                const id = startMonkeyTimer();
+                updateMonkeyTimer(id);
+                console.log("monkeyTimer: %O", id);
+            } else {
+                console.log("timer available");
+                clearInterval(monkeyTimer);
+                updateMonkeyTimer(-1);
+            }
+            return;
+        }
 
         let curStatus = serviceStatus[feature];
         let newStatus = curStatus ? false : true;
@@ -62,18 +62,18 @@ const Monkey = () => {
         refreshStatus();
     };
 
-    // const startMonkeyTimer = () => {
-    //     const intervalId = setInterval(() => {
-    //         randomMonkey();
-    //     }, 3000);
-    //     return intervalId;
-    // };
+    const startMonkeyTimer = () => {
+        const intervalId = setInterval(() => {
+            randomMonkey();
+        }, 5000);
+        return intervalId;
+    };
 
-    // const randomMonkey = () => {
-    //     const trueFalses: boolean[] = [true, false];
-    //     const feature = features[Math.floor(Math.random() * features.length)];
-    //     toggleFeature(feature);
-    // };
+    const randomMonkey = () => {
+        const trueFalses: boolean[] = [true, false];
+        const feature = features[Math.floor(Math.random() * features.length)];
+        toggleFeature(feature);
+    };
 
     return (
         <>
@@ -85,12 +85,16 @@ const Monkey = () => {
                     </Divider>
 
                     <List>
-                        {/* <ListItemButton onClick={() => toggleFeature("random")}>
+                        <ListItemButton onClick={() => toggleFeature("random")}>
                             <ListItemIcon>
                                 <GavelIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Toggle Chaos mode (Random Break)" />
-                        </ListItemButton> */}
+                            {monkeyTimer < 0 ? (
+                            <ListItemText primary="Start Chaos monkey (Random Break)" />
+                            ) : (
+                            <ListItemText primary="Stop Chaos monkey" />
+                            )}
+                        </ListItemButton>
                         <ListItemButton onClick={() => toggleFeature("login")}>
                             <ListItemIcon>
                                 <GavelIcon />
