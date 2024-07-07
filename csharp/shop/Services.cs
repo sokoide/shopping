@@ -11,6 +11,7 @@ class Services
 
     private void ConfigureShopService(WebApplication app)
     {
+        // products
         app.MapGet("/products", () =>
         {
             Log.Information("/products");
@@ -24,13 +25,13 @@ class Services
         .WithName("Products")
         .WithOpenApi();
 
+        // checkout
         app.MapPost("/checkout", async (CheckoutRequest req) =>
         {
             Log.Information("/checkout by {0}", req.username);
 
             int flagid = Globals.GetFlagId("checkout");
             AtomicBoolean flag = Globals.BreakFlags[flagid];
-
 
             if (flag.Get() == false)
             {
@@ -52,6 +53,7 @@ class Services
        .WithName("Checkout")
        .WithOpenApi();
 
+        // login
         app.MapGet("/login", (string username) =>
         {
             Log.Information("/login {0}", username);
@@ -64,13 +66,31 @@ class Services
         })
         .WithName("Login")
         .WithOpenApi();
+
+        // service status
+        app.MapGet("/status", () =>
+        {
+            Log.Information("/status");
+
+            // var result = new bool[] { true, true, true, true };
+            Dictionary<string, bool> result = new Dictionary<string, bool>();
+            foreach (string feature in Globals.Flags)
+            {
+                int id = Globals.GetFlagId(feature);
+                result[feature] = Globals.BreakFlags[id].Get() ? false : true;
+            }
+
+            return Results.Json(result);
+        })
+        .WithName("status")
+        .WithOpenApi();
     }
     private void ConfigureChaosMonkeyService(WebApplication app)
     {
-        ConfigureBreakHandlers("login", app);
-        ConfigureBreakHandlers("products", app);
-        ConfigureBreakHandlers("checkout", app);
-        ConfigureBreakHandlers("deliver", app);
+        foreach (string feature in Globals.Flags)
+        {
+            ConfigureBreakHandlers(feature, app);
+        }
     }
 
     private void ConfigureBreakHandlers(string feature, WebApplication app)

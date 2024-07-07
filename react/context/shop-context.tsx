@@ -1,4 +1,5 @@
 "use client";
+import { get } from "http";
 import { createContext, useEffect, useState } from "react";
 
 // global props with the default values
@@ -6,8 +7,13 @@ export const ShopContext = createContext(null);
 
 const baseCsUrl = "http://localhost:15001";
 const productUrl = baseCsUrl + "/products/";
-const checkoutUrl = baseCsUrl + "/checkout";
-const loginUrl = baseCsUrl + "/login";
+const checkoutUrl = baseCsUrl + "/checkout/";
+const loginUrl = baseCsUrl + "/login/";
+const serviceStatusUrl = baseCsUrl + "/status/";
+const serviceBreakUrl = baseCsUrl + "/break/";
+const serviceFixUrl = baseCsUrl + "/fix/";
+const features : string[] = ["login", "products", "checkout", "delivery"];
+// const monkeyTimer: number = -1;
 
 const emptyCart = () => {
     const productsLength = 20;
@@ -22,8 +28,8 @@ const getCart = () => {
     let items = emptyCart();
 
     if (typeof window !== "undefined") {
-        const storedCart = localStorage.getItem("cartItems");
-        return storedCart ? JSON.parse(storedCart) : items;
+        const stored = localStorage.getItem("cartItems");
+        return stored ? JSON.parse(stored) : items;
     }
     console.log("getCart: window NOT available, using the default empty cart");
     return items;
@@ -33,24 +39,60 @@ const getLoginInfo = () => {
     let loginInfo = {};
 
     if (typeof window !== "undefined") {
-        const storedLoginInfo = localStorage.getItem("loginInfo");
-        return storedLoginInfo ? JSON.parse(storedLoginInfo) : loginInfo;
+        const stored = localStorage.getItem("loginInfo");
+        return stored ? JSON.parse(stored) : loginInfo;
     }
-    console.log("getLoginInfo: window NOT available, using the empty login info");
+    console.log(
+        "getLoginInfo: window NOT available, using the empty login info"
+    );
     return loginInfo;
 };
+
+const getServiceStatus = () => {
+    let serviceStatus = {
+        login: true,
+        products: true,
+        checkout: true,
+        delivery: true,
+    };
+
+    if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("serviceStatus");
+        return stored ? JSON.parse(stored) : serviceStatus;
+    }
+    console.log(
+        "getServiceStatus: window NOT available, using the default service status"
+    );
+    return serviceStatus;
+};
+
+var initialized: boolean = false;
 
 export const ShopContextProvider = (props) => {
     // *** states ***
     // state: items (products)
     const [items, setItems] = useState([]);
+
     useEffect(() => {
-        console.log("fetching products from %O", productUrl);
-        fetch(productUrl)
-            .then((res) => res.json())
-            .then((json) => {
-                setItems(json);
-            });
+        if (initialized === false) {
+            initialized = true;
+            // fetch products
+            console.log("fetching products from %O", productUrl);
+            fetch(productUrl)
+                .then((res) => res.json())
+                .then((json) => {
+                    setItems(json);
+                });
+
+            // fetch service status
+            refreshStatus();
+            // console.log("fetching service status from %O", serviceStatusUrl);
+            // fetch(serviceStatusUrl)
+            //     .then((res) => res.json())
+            //     .then((json) => {
+            //         setServiceStatus(json);
+            //     });
+        }
     }, []);
 
     // state: cartItems
@@ -68,6 +110,17 @@ export const ShopContextProvider = (props) => {
         console.log("saving loginInfo %O in localStorage", loginInfo);
         localStorage.setItem("loginInfo", JSON.stringify(loginInfo));
     }, [loginInfo]);
+
+    // state: serviceStatus
+    const [serviceStatus, setServiceStatus] = useState(getServiceStatus());
+    // save serviceStatus in localStorage whenever it changes
+    useEffect(() => {
+        console.log("saving serviceStatus %O in localStorage", serviceStatus);
+        localStorage.setItem("serviceStatus", JSON.stringify(serviceStatus));
+    }, [serviceStatus]);
+
+    // state: monkeyTimer
+    // const [monkeyTimer, setMonkeyTimer] = useState(-1);
 
     // *** functions ***
     const getTotalCartAmount = () => {
@@ -114,8 +167,8 @@ export const ShopContextProvider = (props) => {
     const checkout = () => {
         console.log("checkout");
         let data = {
-            "cartItems": cartItems,
-            "username": loginInfo.username,
+            cartItems: cartItems,
+            username: loginInfo.username,
         };
         console.log(
             "checking out at %O with %O",
@@ -146,21 +199,19 @@ export const ShopContextProvider = (props) => {
 
     const login = async (username: string): Promise<boolean> => {
         console.log("login(%O)", username);
-        // fetch(loginUrl)
-        //     .then((res) => res.json())
-        //     .then((json) => {
-        //         setItems(json);
-        //     });
-        // setLoginInfo((prev) => ({...prev, loggedIn: true, username: username }));
-        const resp = await fetch(loginUrl + "?username="  +  username);
-        if (!resp.ok){
+        const resp = await fetch(loginUrl + "?username=" + username);
+        if (!resp.ok) {
             return false;
         }
 
         const json = await resp.json();
-        if (json.result === "Success"){
+        if (json.result === "Success") {
             console.log("login(%O) succeeded", username);
-            setLoginInfo((prev) => ({...prev, loggedIn: true, username: username }));
+            setLoginInfo((prev) => ({
+                ...prev,
+                loggedIn: true,
+                username: username,
+            }));
             return true;
         } else {
             console.log("login(%O) failed", username);
@@ -170,13 +221,45 @@ export const ShopContextProvider = (props) => {
 
     const logout = () => {
         console.log("logout");
-        setLoginInfo((prev) => ({...prev, loggedIn: false, username: "" }));
+        setLoginInfo((prev) => ({ ...prev, loggedIn: false, username: "" }));
     };
+
+    const updateServiceStatus = (feature: string, status: boolean) => {
+        console.log("updateService status %O=%O", feature, status);
+        setServiceStatus((prev) => ({ ...prev, feature: status }));
+
+        if (status == true) {
+            fetch(serviceFixUrl + feature).then((res) => {
+                console.log("service fix returned %O", res);
+            });
+        } else {
+            fetch(serviceBreakUrl + feature).then((res) => {
+                console.log("service fix returned %O", res);
+            });
+        }
+    };
+
+    // const updateMonkeyTimer = (id: number) => {
+    //     console.log("updateMonkeyTimer(%O)", id);
+    //     setMonkeyTimer(id);
+    // }
+
+    const refreshStatus = () => {
+        console.log("fetching service status from %O", serviceStatusUrl);
+        fetch(serviceStatusUrl)
+            .then((res) => res.json())
+            .then((json) => {
+                setServiceStatus(json);
+            });
+    }
 
     const contextValue = {
         items,
         cartItems,
         loginInfo,
+        serviceStatus,
+        features,
+        // monkeyTimer,
         getTotalCartAmount,
         addToCart,
         removeFromCart,
@@ -185,6 +268,9 @@ export const ShopContextProvider = (props) => {
         checkout,
         login,
         logout,
+        updateServiceStatus,
+        // updateMonkeyTimer,
+        refreshStatus,
     };
     return (
         <ShopContext.Provider value={contextValue}>
