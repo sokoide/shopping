@@ -10,7 +10,6 @@ const Login = () => {
     const { loginInfo, login, logout } = useContext(ShopContext);
 
     const [username, setUsername] = useState("");
-    // const [loggedIn, setLoggedIn] = useState(false);
 
     const handleUsername = (e) => {
         setUsername(e.target.value);

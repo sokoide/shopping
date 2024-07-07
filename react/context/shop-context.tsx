@@ -113,17 +113,22 @@ export const ShopContextProvider = (props) => {
 
     const checkout = () => {
         console.log("checkout");
+        let data = {
+            "cartItems": cartItems,
+            "username": loginInfo.username,
+        };
         console.log(
             "checking out at %O with %O",
             checkoutUrl,
-            JSON.stringify(cartItems)
+            JSON.stringify(data)
         );
+
         fetch(checkoutUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(cartItems),
+            body: JSON.stringify(data),
         })
             .then((res) => res.json())
             .then((json) => {
