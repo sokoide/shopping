@@ -1,10 +1,8 @@
-@shop_HostAddress = http://localhost:5142
+@shop_HostAddress = http://localhost:15001
 
 GET {{shop_HostAddress}}/products/
 Accept: application/json
-
 ###
-
 POST {{shop_HostAddress}}/checkout/
 Content-Type: application/json
 Accept: application/json
@@ -14,3 +12,15 @@ Accept: application/json
     "2": 3,
     "3": 4
 }
+### Login
+GET {{shop_HostAddress}}/login?username="sokoide@ms.com"
+Accept: application/json
+###
+GET {{shop_HostAddress}}/break/login/
+Accept: application/json
+###
+GET {{shop_HostAddress}}/fix/login/
+Accept: application/json
+###
+GET {{shop_HostAddress}}/status/login/
+Accept: application/json

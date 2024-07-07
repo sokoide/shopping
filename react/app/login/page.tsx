@@ -17,8 +17,22 @@ const Login = () => {
 
     const handleLogin = () => {
         if (username === "") return;
-        login(username);
-        window.location.href = "/";
+        login(username)
+        .then((result: boolean) => {
+            console.log(result);
+            if (result) {
+                console.log("login success");
+                window.location.href = "/";
+            } else {
+             alert("login failed");
+            }
+        });
+        // if(login(username)) {
+        //     console.log("login success");
+        //     window.location.href = "/";
+        // } else {
+        //     alert("login failed");
+        // }
     }
 
     const handleLogout = () => {

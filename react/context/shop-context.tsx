@@ -7,6 +7,7 @@ export const ShopContext = createContext(null);
 const baseCsUrl = "http://localhost:15001";
 const productUrl = baseCsUrl + "/products/";
 const checkoutUrl = baseCsUrl + "/checkout";
+const loginUrl = baseCsUrl + "/login";
 
 const emptyCart = () => {
     const productsLength = 20;
@@ -143,9 +144,28 @@ export const ShopContextProvider = (props) => {
             });
     };
 
-    const login = (username) => {
+    const login = async (username: string): Promise<boolean> => {
         console.log("login(%O)", username);
-        setLoginInfo((prev) => ({...prev, loggedIn: true, username: username }));
+        // fetch(loginUrl)
+        //     .then((res) => res.json())
+        //     .then((json) => {
+        //         setItems(json);
+        //     });
+        // setLoginInfo((prev) => ({...prev, loggedIn: true, username: username }));
+        const resp = await fetch(loginUrl + "?username="  +  username);
+        if (!resp.ok){
+            return false;
+        }
+
+        const json = await resp.json();
+        if (json.result === "Success"){
+            console.log("login(%O) succeeded", username);
+            setLoginInfo((prev) => ({...prev, loggedIn: true, username: username }));
+            return true;
+        } else {
+            console.log("login(%O) failed", username);
+            return false;
+        }
     };
 
     const logout = () => {
