@@ -4,13 +4,16 @@ import React, { use, useContext } from "react";
 import "./cart.css";
 import CartItem from "./cartItem";
 import { ShopContext } from "@/context/shop-context";
-import Link from "next/link";
+
+import Button from '@mui/material/Button';
+import Box from "@mui/material/Box";
+
+
 
 const Cart = () => {
     const { items, cartItems, getTotalCartAmount, clearCart, checkout, loginInfo } =
         useContext(ShopContext);
     const totalAmount = Math.round(getTotalCartAmount() * 100) / 100;
-
 
     return (
         <div className="cart">
@@ -30,30 +33,19 @@ const Cart = () => {
                     <p className="total">Total: ${totalAmount}</p>
 
                     {loginInfo.loggedIn ? (
-                    <button
-                        onClick={() => {
-                            checkout();
-                        }}
-                    >
+                    <Button variant="contained" onClick={() => { checkout();}}>
                         Checkout
-                    </button>
+                    </Button>
                     ) : (
-                        <button
-                            onClick={() => {
-                                window.location.href = "/login";
-                            }}
-                        >
-                            Login
-                        </button>
+
+                    <Button variant="contained" onClick={() => { window.location.href = "/login";}}>
+                        Login
+                    </Button>
                     )}
 
-                    <button
-                        onClick={() => {
-                            clearCart();
-                        }}
-                    >
+                    <Button variant="contained" onClick={() => { clearCart();}}>
                         Empty Cart
-                    </button>
+                    </Button>
                 </div>
             ) : (
                 <h1> cart is empty</h1>

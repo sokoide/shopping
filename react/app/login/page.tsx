@@ -3,6 +3,7 @@
 import React, { useState, useContext } from "react";
 import { ShopContext } from "@/context/shop-context";
 import "./login.css";
+import Button from '@mui/material/Button';
 
 
 const Login = () => {
@@ -30,9 +31,7 @@ const Login = () => {
         <div className="wrapper">
             <div className="content">
                 {loginInfo.loggedIn ? (
-                    <button className="button" onClick={handleLogout}>
-                        logout
-                    </button>
+                    <Button variant="contained" onClick={handleLogout}>Logout</Button>
                 ) : (
                     <>
                         <div className="input">
@@ -45,9 +44,7 @@ const Login = () => {
                                 onChange={handleUsername}
                             />
                         </div>
-                        <button className="button" onClick={handleLogin}>
-                            login
-                        </button>
+                    <Button variant="contained" onClick={handleLogin}>Login</Button>
                     </>
                 )}
             </div>

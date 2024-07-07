@@ -7,14 +7,12 @@
 }
 
 .links {
-    /* margin-right: 50px; */
     display: flex;
     align-items: center;
 }
 
 .links :hover {
     color: lightcoral;
-    font-size: 22px;
 }
 
 .links a {
@@ -22,12 +20,4 @@
     color: white;
     margin-left: 20px;
     font-size: 20px;
-}
-
-.user {
-    font-size: 40px;
-    position: absolute;
-    right: 0px;
-    margin-right: 20px;
-    display: flex;
 }
