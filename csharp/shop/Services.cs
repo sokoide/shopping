@@ -43,7 +43,7 @@ class Services
                 Console.WriteLine("Product: {0}, Quantity: {1}", item.Key, item.Value);
             };
             // TODO: ship the products
-            return await Task.FromResult(Results.Json(new RestResult("success", "Thank you for purchasing!", "")));
+            return await Task.FromResult(Results.Json(new RestResult("Success", "Thank you for purchasing!", "")));
         })
        .WithName("Checkout")
        .WithOpenApi();

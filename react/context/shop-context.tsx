@@ -120,6 +120,9 @@ export const ShopContextProvider = (props) => {
         );
         fetch(checkoutUrl, {
             method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
             body: JSON.stringify(cartItems),
         })
             .then((res) => res.json())
@@ -127,7 +130,7 @@ export const ShopContextProvider = (props) => {
                 console.log("json: %O", json);
                 if (json.result === "Success") {
                     clearCart();
-                    // TODO: show thank you message
+                    // show thank you message
                     alert(json.message);
                 } else {
                     // TODO: show error message
