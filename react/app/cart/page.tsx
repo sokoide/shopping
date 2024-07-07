@@ -16,10 +16,9 @@ const Cart = () => {
     const totalAmount = Math.round(getTotalCartAmount() * 100) / 100;
 
     return (
-        <div className="cart">
-            <div>
-                <h1>Items in Cart</h1>
-            </div>
+        <div className="cartcontent">
+            <h1>Items in Cart</h1>
+
             <div className="cart">
                 {items.map((item) => {
                     if (cartItems[item.id] !== 0) {
@@ -50,7 +49,7 @@ const Cart = () => {
             ) : (
                 <h1> cart is empty</h1>
             )}
-        </div>
+    </div>
     );
 };
 

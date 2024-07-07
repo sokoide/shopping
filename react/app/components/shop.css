@@ -9,15 +9,18 @@
     height: auto;
     margin: auto;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     place-items: start;
 }
 
 .product {
+    box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
+    /* background-color: lightgoldenrodyellow; */
+    padding: 10px;
     border-radius: 15px;
-    width: 300px;
+    width: 240px;
     height: fit-content;
-    margin: 50px auto;
+    margin: 20px auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -57,15 +60,24 @@
 
 .price {
     font-weight: bold;
+    margin: 0px auto;
     font-size: 2em;
 }
 
 .category {
+    width: fit-content;
+    text-align: center;
+    display: inline-block;
+    margin: 0 auto;
     background-color: darkblue;
     color: white;
     border-radius: 100px;
-    width: fit-content;
     padding: 5px 10px;
+}
+
+.image {
+    display: inline-block;
+    margin: 10px auto;
 }
 
 .image:hover {

@@ -15,14 +15,14 @@ const Item = (props) => {
 		<p className="title">
 		{id}. {title}
 		</p>
-		<img src={image} alt={title} className="image" />
+		<img src={image} alt={title} className="image" width="80%"/>
 		<p className="price">${price}</p>
 		<p className="description">{description}</p>
 		<p className="category">{category}</p>
 		</div>
 
 		<Button variant="contained" onClick={() => addToCart(id)}>Add to Cart&nbsp;
-		{cartItemCount > 0 && <span>(Quantity: {cartItemCount})</span>}
+		{cartItemCount > 0 && <span>({cartItemCount})</span>}
 		</Button>
 		</div>
 	);
