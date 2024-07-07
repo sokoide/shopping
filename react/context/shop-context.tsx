@@ -12,6 +12,7 @@ const loginUrl = baseCsUrl + "/login/";
 const serviceStatusUrl = baseCsUrl + "/status/";
 const serviceBreakUrl = baseCsUrl + "/break/";
 const serviceFixUrl = baseCsUrl + "/fix/";
+const resetStatusUrl = baseCsUrl + "/reset/";
 const features : string[] = ["login", "products", "checkout", "delivery"];
 const monkeyTimer: number = -1;
 
@@ -86,12 +87,6 @@ export const ShopContextProvider = (props) => {
 
             // fetch service status
             refreshStatus();
-            // console.log("fetching service status from %O", serviceStatusUrl);
-            // fetch(serviceStatusUrl)
-            //     .then((res) => res.json())
-            //     .then((json) => {
-            //         setServiceStatus(json);
-            //     });
         }
     }, []);
 
@@ -253,6 +248,15 @@ export const ShopContextProvider = (props) => {
             });
     }
 
+    const resetStatus = () => {
+        console.log("resetStatus");
+        fetch(resetStatusUrl)
+            .then((res) => res.json())
+            .then((json) => {
+                setServiceStatus(json);
+            });
+    }
+
     const contextValue = {
         items,
         cartItems,
@@ -271,6 +275,7 @@ export const ShopContextProvider = (props) => {
         updateServiceStatus,
         updateMonkeyTimer,
         refreshStatus,
+        resetStatus,
     };
     return (
         <ShopContext.Provider value={contextValue}>

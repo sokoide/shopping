@@ -18,7 +18,15 @@ class Services
         {
             Log.Information("/reset");
             Globals.Reset();
-            return Results.Json(new RestResult("Success", "", ""));
+
+            Dictionary<string, bool> result = new Dictionary<string, bool>();
+            foreach (string feature in Globals.Flags)
+            {
+                int id = Globals.GetFlagId(feature);
+                result[feature] = Globals.BreakFlags[id].Get() ? false : true;
+            }
+
+            return Results.Json(result);
         })
        .WithName("Reset")
        .WithOpenApi();
@@ -160,7 +168,6 @@ class Services
         {
             Log.Information("/status");
 
-            // var result = new bool[] { true, true, true, true };
             Dictionary<string, bool> result = new Dictionary<string, bool>();
             foreach (string feature in Globals.Flags)
             {

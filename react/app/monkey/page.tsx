@@ -14,6 +14,7 @@ import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 import Chip from "@mui/material/Chip";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { green, red, pink } from "@mui/material/colors";
 import { ShopContext } from "@/context/shop-context";
@@ -26,13 +27,14 @@ const Monkey = () => {
         monkeyTimer,
         updateMonkeyTimer,
         refreshStatus,
+        resetStatus,
     } = useContext(ShopContext);
     var initialized: boolean = false;
 
     const toggleFeature = (feature: string) => {
         if (feature == "random") {
             console.log("random");
-            if (monkeyTimer < 0){
+            if (monkeyTimer < 0) {
                 console.log("monkeyTimer: %O", monkeyTimer);
                 const id = startMonkeyTimer();
                 updateMonkeyTimer(id);
@@ -62,6 +64,10 @@ const Monkey = () => {
         refreshStatus();
     };
 
+    const reset = () => {
+        resetStatus();
+    };
+
     const startMonkeyTimer = () => {
         const intervalId = setInterval(() => {
             randomMonkey();
@@ -77,8 +83,7 @@ const Monkey = () => {
 
     return (
         <>
-            <h1>Chaos Monkey: TBD </h1>
-            <Grid container cpacing={2}>
+            <Grid container spacing={2}>
                 <Grid item xs={8}>
                     <Divider>
                         <Chip label="Break/Fix Actions" size="small" />
@@ -90,9 +95,9 @@ const Monkey = () => {
                                 <GavelIcon />
                             </ListItemIcon>
                             {monkeyTimer < 0 ? (
-                            <ListItemText primary="Start Chaos monkey (Random Break)" />
+                                <ListItemText primary="Start Chaos monkey (Random Break)" />
                             ) : (
-                            <ListItemText primary="Stop Chaos monkey" />
+                                <ListItemText primary="Stop Chaos monkey" />
                             )}
                         </ListItemButton>
                         <ListItemButton onClick={() => toggleFeature("login")}>
@@ -125,13 +130,17 @@ const Monkey = () => {
                             </ListItemIcon>
                             <ListItemText primary="Break/Fix Delivery" />
                         </ListItemButton>
-                        <ListItemButton
-                            onClick={() => pullStatus()}
-                        >
+                        <ListItemButton onClick={() => reset()}>
+                            <ListItemIcon>
+                                <RestartAltIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Reset All Status" />
+                        </ListItemButton>
+                        <ListItemButton onClick={() => pullStatus()}>
                             <ListItemIcon>
                                 <RefreshIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Refresh Status" />
+                            <ListItemText primary="Pull Latest Status" />
                         </ListItemButton>
                     </List>
 
