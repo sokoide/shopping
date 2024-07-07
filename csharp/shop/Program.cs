@@ -9,20 +9,16 @@ using OpenTelemetry.Metrics;
 using Serilog;
 using Serilog.Sinks.OpenTelemetry;
 
-const string OTEL_SERVICE_NAME = "Nintenbo-backend";
-const string OTLP_GRPC_ENDPOINT = "http://localhost:4317/";
-const string OTLP_HTTP_ENDPOINT = "http://localhost:4318/";
-
 // Configure Serilog & OTLP logging
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.OpenTelemetry(options =>
     {
-        options.Endpoint = OTLP_HTTP_ENDPOINT + "logs";
+        options.Endpoint = Consts.OTLP_HTTP_ENDPOINT + "logs";
         options.Protocol = OtlpProtocol.HttpProtobuf;
         options.ResourceAttributes = new Dictionary<string, object>
         {
-            ["service.name"] = OTEL_SERVICE_NAME,
+            ["service.name"] = Consts.OTEL_SERVICE_NAME,
         };
     })
     // .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
@@ -42,13 +38,14 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
         builder => builder
-            .WithOrigins("http://localhost:3000") // Specify the allowed origin
+            // .WithOrigins("http://localhost:3000") // Specify the allowed origin
+            .WithOrigins(Consts.CORS_ORIGINS)
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
 
 // Configure OTLP Tracing and Metrics
-var tracingOtlpEndpoint = OTLP_GRPC_ENDPOINT;
+var tracingOtlpEndpoint = Consts.OTLP_GRPC_ENDPOINT;
 var otel = builder.Services.AddOpenTelemetry();
 
 // Configure OpenTelemetry Resources with the application name
@@ -70,7 +67,7 @@ otel.WithTracing(tracing =>
 {
     tracing.AddAspNetCoreInstrumentation();
     tracing.AddHttpClientInstrumentation();
-    tracing.AddSource(OTEL_SERVICE_NAME);
+    tracing.AddSource(Consts.OTEL_SERVICE_NAME);
     tracing.AddOtlpExporter(otlpOptions =>
      {
          otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint);

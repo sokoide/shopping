@@ -4,8 +4,7 @@ import { createContext, useEffect, useState } from "react";
 // global props with the default values
 export const ShopContext = createContext(null);
 
-// const baseGoUrl = "http://localhost:8080";
-const baseCsUrl = "http://localhost:5142";
+const baseCsUrl = "http://localhost:15001";
 const productUrl = baseCsUrl + "/products/";
 const checkoutUrl = baseCsUrl + "/checkout";
 
