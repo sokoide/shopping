@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -17,7 +18,7 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.OpenTelemetry(options =>
     {
-        options.Endpoint = Consts.OTLP_HTTP_ENDPOINT + "logs";
+        options.Endpoint = Consts.OTLP_HTTP_ENDPOINT + "v1/logs";
         options.Protocol = OtlpProtocol.HttpProtobuf;
         options.ResourceAttributes = new Dictionary<string, object>
         {
@@ -41,15 +42,16 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
         builder => builder
-            // .WithOrigins("http://localhost:3000") // Specify the allowed origin
             .WithOrigins(Consts.CORS_ORIGINS)
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
 
 // Configure OTLP Tracing and Metrics
-var tracingOtlpEndpoint = Consts.OTLP_GRPC_ENDPOINT;
-var otel = builder.Services.AddOpenTelemetry();
+var otel = builder.Services.AddOpenTelemetry()
+    .UseOtlpExporter(
+         OtlpExportProtocol.Grpc,
+         new Uri(Consts.OTLP_GRPC_ENDPOINT));
 
 // Configure OpenTelemetry Resources with the application name
 otel.ConfigureResource(resource => resource
@@ -65,17 +67,11 @@ otel.WithMetrics(metrics => metrics
     .AddMeter("Microsoft.AspNetCore.Server.Kestrel"));
 // .AddPrometheusExporter());
 
-// Add Tracing for ASP.NET Core and our custom ActivitySource and export to Jaeger
-otel.WithTracing(tracing =>
-{
-    tracing.AddAspNetCoreInstrumentation();
-    tracing.AddHttpClientInstrumentation();
-    tracing.AddSource(Consts.OTEL_SERVICE_NAME);
-    tracing.AddOtlpExporter(otlpOptions =>
-     {
-         otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint);
-     });
-});
+// Add Tracing for ASP.NET Core and our custom ActivitySource and export 
+otel.WithTracing(tracing => tracing
+    .AddAspNetCoreInstrumentation()
+    .AddHttpClientInstrumentation()
+    .AddSource(Consts.OTEL_SERVICE_NAME));
 
 var app = builder.Build();
 
