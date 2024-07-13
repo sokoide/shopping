@@ -15,7 +15,6 @@ import Divider from "@mui/material/Divider";
 import Chip from "@mui/material/Chip";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { green, red, orange, pink } from "@mui/material/colors";
 import { ShopContext } from "@/context/shop-context";
 

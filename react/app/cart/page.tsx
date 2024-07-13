@@ -1,14 +1,11 @@
 "use client";
 
-import React, { use, useContext } from "react";
+import React, { useContext } from "react";
 import "./cart.css";
 import CartItem from "./cartItem";
 import { ShopContext } from "@/context/shop-context";
 
 import Button from '@mui/material/Button';
-import Box from "@mui/material/Box";
-
-
 
 const Cart = () => {
     const { items, cartItems, getTotalCartAmount, clearCart, checkout, loginInfo } =

@@ -1,7 +1,6 @@
 using Serilog;
 using System.Text.Json;
 using System.Text;
-using Grpc.Core;
 
 class Services
 {
@@ -235,6 +234,7 @@ class Services
         .WithName("status")
         .WithOpenApi();
     }
+
     private void ConfigureChaosMonkeyService(WebApplication app)
     {
         foreach (string feature in Globals.Flags)

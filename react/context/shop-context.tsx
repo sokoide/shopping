@@ -1,5 +1,4 @@
 "use client";
-import { get } from "http";
 import { createContext, useEffect, useState } from "react";
 
 // global props with the default values

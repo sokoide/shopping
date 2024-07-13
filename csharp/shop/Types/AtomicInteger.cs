@@ -1,5 +1,3 @@
-using System.Threading;
-
 public class AtomicInteger
 {
     private int _value;

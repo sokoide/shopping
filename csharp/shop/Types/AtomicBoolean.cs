@@ -1,5 +1,3 @@
-using System.Threading;
-
 public class AtomicBoolean
 {
     private int _boolValue = 0; // 0 for false, 1 for true
