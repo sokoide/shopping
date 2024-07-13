@@ -44,10 +44,11 @@ class Services
 
             if (flag.Get() == true)
             {
-                Log.Error("product service is broken");
-                return null;
+                Log.Error("product service is down");
+                int st = StatusCodes.Status500InternalServerError;
+                return Results.Json(new Product[] {}, statusCode: st);
             }
-            return Consts.GetProducts();
+            return Results.Json(Consts.GetProducts());
         })
         .WithName("Products")
         .WithOpenApi();
@@ -113,8 +114,9 @@ class Services
             }
             else
             {
-                Log.Error("checkout service is broken");
-                return await Task.FromResult(Results.Json(new RestResult("Failure", "Checkout service is broken", "")));
+                Log.Error("checkout service is down");
+                int st = StatusCodes.Status500InternalServerError;
+                return await Task.FromResult(Results.Json(new RestResult("Failure", "Checkout service is down", ""), statusCode: st));
             }
         })
         .WithName("Checkout")
@@ -182,8 +184,9 @@ class Services
             }
             else
             {
-                Log.Error("delivery service is broken");
-                return await Task.FromResult(Results.Json(new RestResult("Failure", "Delivery service is broken", "")));
+                Log.Error("delivery service is down");
+                int st = StatusCodes.Status500InternalServerError;
+                return await Task.FromResult(Results.Json(new RestResult("Failure", "Delivery service is down", ""), statusCode: st));
             }
         })
         .WithName("Delivery")
