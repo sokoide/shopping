@@ -38,13 +38,17 @@ dotnet run
 ```sh
 cd shopping-docker
 podman-compose up -d
+
 # to stop
-podman-compose down
+podman-compose stop
+
+# to start again
+podman-compose start
 ```
 
 ## Grafana
 
-* Granfana datasource connections
+* Grafana datasource connections
   * cortex: <http://cortex:9009/api/prom>
   * loki: <http://loki:3100>
   * tempo: <http://tempo:3200>
