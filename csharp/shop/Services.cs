@@ -62,7 +62,7 @@ class Services
         // checkout
         app.MapPost("/checkout", async (CheckoutRequest req) =>
         {
-            Log.Information("/checkout by {0}", req.username);
+            Log.Information($"/checkout by {req.username}");
 
             int flagid = Globals.GetFlagId("checkout");
             AtomicInteger flag = Globals.BreakFlags[flagid];
@@ -72,14 +72,14 @@ class Services
                 if (flag.Get() == 2)
                 {
                     int sleepMs = rand.Next(1000, 5000);
-                    Log.Warning($"checkout service is {sleepMs} ms delayed");
+                    Log.Warning($"user: {req.username} checkout service {sleepMs} ms delayed");
                     Thread.Sleep(sleepMs);
                 }
                 foreach (var item in req.cartItems)
                 {
                     if (item.Value > 0)
                     {
-                        Log.Information("{0} bought productid:{1}, product:{2}, quantity:{3}", req.username, item.Key, Consts.GetProductName(item.Key), item.Value);
+                        Log.Information($"user: {req.username} bought productid:{item.Key}, product:{Consts.GetProductName(item.Key)}, quantity:{item.Value}");
                     }
                 };
                 // ship the products
@@ -87,13 +87,13 @@ class Services
                 {
                     try
                     {
-                        string url = string.Format("http://localhost:{0}/delivery", Consts.WEBAPI_PORT);
+                        string url = string.Format($"http://localhost:{Consts.WEBAPI_PORT}/delivery");
 
                         // Make the GET request
                         string jsonData = JsonSerializer.Serialize(req);
                         HttpContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
 
-                        Log.Information("Calling {0} with {1}", url, jsonData);
+                        Log.Information($"user: {req.username} Calling {url} with {jsonData}");
                         HttpResponseMessage response = await client.PostAsync(url, content);
 
                         // Ensure the request was successful
@@ -108,7 +108,7 @@ class Services
                         RestResult? res = JsonSerializer.Deserialize<RestResult>(responseBody);
                         if (res == null)
                         {
-                            Log.Error("Unexpected response from delivery service");
+                            Log.Error($"user: {req.username} Unexpected response from delivery service");
                             return await Task.FromResult(Results.Json(new RestResult("Failure", "Failed in delivery", "res is null")));
                         }
                         else if (res.Result != "Success")
@@ -119,14 +119,14 @@ class Services
                     }
                     catch (HttpRequestException e)
                     {
-                        Log.Error("Failed in delivery. Err: {Message}", e.Message);
+                        Log.Error($"user: {req.username} Failed in delivery. Err: {e.Message}");
                         return await Task.FromResult(Results.Json(new RestResult("Failure", "Failed in delivery", e.Message)));
                     }
                 }
             }
             else
             {
-                Log.Error("checkout service is down");
+                Log.Error($"user: {req.username} checkout service is down");
                 int st = StatusCodes.Status500InternalServerError;
                 return await Task.FromResult(Results.Json(new RestResult("Failure", "Checkout service is down", ""), statusCode: st));
             }
@@ -137,7 +137,7 @@ class Services
         // login
         app.MapGet("/login", (string username) =>
         {
-            Log.Information("/login {0}", username);
+            Log.Information($"/login {username}");
 
             int flagid = Globals.GetFlagId("login");
             AtomicInteger flag = Globals.BreakFlags[flagid];
@@ -145,7 +145,7 @@ class Services
             if (flag.Get() == 2)
             {
                 int sleepMs = rand.Next(1000, 5000);
-                Log.Warning($"login service is {sleepMs} ms delayed");
+                Log.Warning($"user: {username} login service {sleepMs} ms delayed");
                 Thread.Sleep(sleepMs);
             }
 
@@ -174,7 +174,7 @@ class Services
                     msg = "Internal server error";
                     break;
                 }
-                Log.Error($"{username} login failed, reason: {msg}");
+                Log.Error($"user: {username} login failed, reason: {msg}");
                 return Results.Json(new RestResult("Failure", msg, ""), statusCode: st);
             }
             return Results.Json(new RestResult("Success", "", ""));
@@ -185,7 +185,7 @@ class Services
         // delivery
         app.MapPost("/delivery", async (CheckoutRequest req) =>
         {
-            Log.Information("/delivery by {0}", req.username);
+            Log.Information($"/delivery by {req.username}");
 
             int flagid = Globals.GetFlagId("delivery");
             AtomicInteger flag = Globals.BreakFlags[flagid];
@@ -195,7 +195,7 @@ class Services
                 if (flag.Get() == 2)
                 {
                     int sleepMs = rand.Next(1000, 5000);
-                    Log.Warning($"deliery is {sleepMs} ms delayed");
+                    Log.Warning($"user: {req.username} deliery {sleepMs} ms delayed");
                     Thread.Sleep(sleepMs);
                 }
 
@@ -203,7 +203,7 @@ class Services
                 {
                     if (item.Value > 0)
                     {
-                        Log.Information("{0} requested delivery for productid:{1}, product:{2}, quantity:{3}", req.username, item.Key, Consts.GetProductName(item.Key), item.Value);
+                        Log.Information($"user: {req.username} requested delivery for productid:{item.Key}, product:{Consts.GetProductName(item.Key)}, quantity:{item.Value}");
                     }
                 };
                 return await Task.FromResult(Results.Json(new RestResult("Success", "Delivery successful", "")));
