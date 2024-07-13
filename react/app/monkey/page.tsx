@@ -48,7 +48,7 @@ const Monkey = () => {
         }
 
         let curStatus = serviceStatus[feature];
-        let newStatus = curStatus ? false : true;
+        let newStatus = curStatus === 0 ? 1 : 0;
         serviceStatus[feature] = newStatus;
         updateServiceStatus(feature, newStatus);
         console.log(
@@ -150,7 +150,7 @@ const Monkey = () => {
                     <List>
                         <ListItem>
                             <ListItemIcon>
-                                {serviceStatus["login"] ? (
+                                {serviceStatus["login"] === 0 ? (
                                     <CheckCircleOutlineIcon
                                         sx={{ color: green[500] }}
                                     />
@@ -164,7 +164,7 @@ const Monkey = () => {
                         </ListItem>
                         <ListItem>
                             <ListItemIcon>
-                                {serviceStatus["products"] ? (
+                                {serviceStatus["products"] === 0 ? (
                                     <CheckCircleOutlineIcon
                                         sx={{ color: green[500] }}
                                     />
@@ -178,7 +178,7 @@ const Monkey = () => {
                         </ListItem>
                         <ListItem>
                             <ListItemIcon>
-                                {serviceStatus["checkout"] ? (
+                                {serviceStatus["checkout"] === 0 ? (
                                     <CheckCircleOutlineIcon
                                         sx={{ color: green[500] }}
                                     />
@@ -192,7 +192,7 @@ const Monkey = () => {
                         </ListItem>
                         <ListItem>
                             <ListItemIcon>
-                                {serviceStatus["delivery"] ? (
+                                {serviceStatus["delivery"] === 0 ? (
                                     <CheckCircleOutlineIcon
                                         sx={{ color: green[500] }}
                                     />

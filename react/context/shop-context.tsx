@@ -52,10 +52,10 @@ const getLoginInfo = () => {
 
 const getServiceStatus = () => {
     let serviceStatus = {
-        login: true,
-        products: true,
-        checkout: true,
-        delivery: true,
+        login: 0,
+        products: 0,
+        checkout: 0,
+        delivery: 0,
     };
 
     if (typeof window !== "undefined") {
@@ -220,11 +220,11 @@ export const ShopContextProvider = (props) => {
         setLoginInfo((prev) => ({ ...prev, loggedIn: false, username: "" }));
     };
 
-    const updateServiceStatus = (feature: string, status: boolean) => {
+    const updateServiceStatus = (feature: string, status: number) => {
         console.log("updateService status %O=%O", feature, status);
         setServiceStatus((prev) => ({ ...prev, feature: status }));
 
-        if (status == true) {
+        if (status === 0) {
             fetch(serviceFixUrl + feature).then((res) => {
                 console.log("service fix returned %O", res);
             });

@@ -17,13 +17,16 @@ public class Globals
         }
         return -1;
     }
-    public static AtomicBoolean[] BreakFlags = new AtomicBoolean[Flags.Length];
+
+    // 0: operational
+    // 1: broken
+    public static AtomicInteger[] BreakFlags = new AtomicInteger[Flags.Length];
 
     public static void Init()
     {
         for (int i = 0; i < Flags.Length; i++)
         {
-            BreakFlags[i] = new AtomicBoolean(false);
+            BreakFlags[i] = new AtomicInteger(0);
         }
     }
 
@@ -31,7 +34,7 @@ public class Globals
     {
         for (int i = 0; i < Flags.Length; i++)
         {
-            BreakFlags[i].Set(false);
+            BreakFlags[i].Set(0);
         }
     }
 }

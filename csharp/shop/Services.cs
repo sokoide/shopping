@@ -22,11 +22,11 @@ class Services
             Log.Information("/reset");
             Globals.Reset();
 
-            Dictionary<string, bool> result = new Dictionary<string, bool>();
+            Dictionary<string, int> result = new Dictionary<string, int>();
             foreach (string feature in Globals.Flags)
             {
                 int id = Globals.GetFlagId(feature);
-                result[feature] = Globals.BreakFlags[id].Get() ? false : true;
+                result[feature] = Globals.BreakFlags[id].Get();
             }
 
             return Results.Json(result);
@@ -40,13 +40,13 @@ class Services
             Log.Information("/products");
 
             int flagid = Globals.GetFlagId("products");
-            AtomicBoolean flag = Globals.BreakFlags[flagid];
+            AtomicInteger flag = Globals.BreakFlags[flagid];
 
-            if (flag.Get() == true)
+            if (flag.Get() == 1)
             {
                 Log.Error("product service is down");
                 int st = StatusCodes.Status500InternalServerError;
-                return Results.Json(new Product[] {}, statusCode: st);
+                return Results.Json(new Product[] { }, statusCode: st);
             }
             return Results.Json(Consts.GetProducts());
         })
@@ -59,9 +59,9 @@ class Services
             Log.Information("/checkout by {0}", req.username);
 
             int flagid = Globals.GetFlagId("checkout");
-            AtomicBoolean flag = Globals.BreakFlags[flagid];
+            AtomicInteger flag = Globals.BreakFlags[flagid];
 
-            if (flag.Get() == false)
+            if (flag.Get() == 0)
             {
                 foreach (var item in req.cartItems)
                 {
@@ -128,9 +128,9 @@ class Services
             Log.Information("/login {0}", username);
 
             int flagid = Globals.GetFlagId("login");
-            AtomicBoolean flag = Globals.BreakFlags[flagid];
+            AtomicInteger flag = Globals.BreakFlags[flagid];
 
-            if (flag.Get() == true)
+            if (flag.Get() == 1)
             {
                 int r = rand.Next(100); // r = [0, 100)
                 int st;
@@ -169,9 +169,9 @@ class Services
             Log.Information("/delivery by {0}", req.username);
 
             int flagid = Globals.GetFlagId("delivery");
-            AtomicBoolean flag = Globals.BreakFlags[flagid];
+            AtomicInteger flag = Globals.BreakFlags[flagid];
 
-            if (flag.Get() == false)
+            if (flag.Get() == 0)
             {
                 foreach (var item in req.cartItems)
                 {
@@ -197,11 +197,11 @@ class Services
         {
             Log.Information("/status");
 
-            Dictionary<string, bool> result = new Dictionary<string, bool>();
+            Dictionary<string, int> result = new Dictionary<string, int>();
             foreach (string feature in Globals.Flags)
             {
                 int id = Globals.GetFlagId(feature);
-                result[feature] = Globals.BreakFlags[id].Get() ? false : true;
+                result[feature] = Globals.BreakFlags[id].Get();
             }
 
             return Results.Json(result);
@@ -222,10 +222,10 @@ class Services
         app.MapGet("/break/" + feature, () =>
         {
             int flagid = Globals.GetFlagId(feature);
-            AtomicBoolean flag = Globals.BreakFlags[flagid];
+            AtomicInteger flag = Globals.BreakFlags[flagid];
 
             Log.Information("/break/" + feature);
-            flag.Set(true);
+            flag.Set(1);
             return Results.StatusCode(200);
         })
         .WithName("break/" + feature)
@@ -234,10 +234,10 @@ class Services
         app.MapGet("/fix/" + feature, () =>
         {
             int flagid = Globals.GetFlagId(feature);
-            AtomicBoolean flag = Globals.BreakFlags[flagid];
+            AtomicInteger flag = Globals.BreakFlags[flagid];
 
             Log.Information("/fix/" + feature);
-            flag.Set(false);
+            flag.Set(0);
             return Results.StatusCode(200);
         })
         .WithName("fix/" + feature)
@@ -246,11 +246,11 @@ class Services
         app.MapGet("/status/" + feature, () =>
         {
             int flagid = Globals.GetFlagId(feature);
-            AtomicBoolean flag = Globals.BreakFlags[flagid];
+            AtomicInteger flag = Globals.BreakFlags[flagid];
 
             Log.Information("/status/" + feature);
-            bool value = flag.Get();
-            if (value)
+            int value = flag.Get();
+            if (value == 0)
             {
                 return Results.Ok("Broken");
             }
