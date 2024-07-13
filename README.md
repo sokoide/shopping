@@ -1,56 +1,71 @@
 # README
 
+## Format
+
+* Config is in `.editorconfig`
+* vim
+
+    ```text
+    # configure 'editorconfig/editorconfig-vim' and 'sbdchd/neoformat' plug-ins
+    autocmd BufWritePre *.cs silent! :Neoformat
+    ```
+
+* vscode
+  * configure `EditorConfig for VS Code` plug-in
+
+
+
 ## Configuration
 
 * csharp/shop/Consts.cs
 
-```cs
-// change this line to your local host name of the ASP.NET server
-private const string ImageBaseUrl = "http://scottmm.local:15001/";
+    ```cs
+    // change this line to your local host name of the ASP.NET server
+    private const string ImageBaseUrl = "http://scottmm.local:15001/";
 
-// add your next.js server's host:port as CORS_ORIGINS
-public static string[] CORS_ORIGINS = new[] { "http://10.1.196.5:3000", "http://localhost:3000", "http://scottmm.local:3000" };
-```
+    // add your next.js server's host:port as CORS_ORIGINS
+    public static string[] CORS_ORIGINS = new[] { "http://10.1.196.5:3000", "http://localhost:3000", "http://scottmm.local:3000" };
+    ```
 
 * react/context/shop-context.tsx
 
-```tsx
-// change this line to your local host name of the ASP.NET server
-const baseCsUrl = "http://scottmm.local:15001";
-```
+    ```tsx
+    // change this line to your local host name of the ASP.NET server
+    const baseCsUrl = "http://scottmm.local:15001";
+    ```
 
 ## How to run
 
 * submodule update
 
-```sh
-git submodule update --init --recursive
-```
+    ```sh
+    git submodule update --init --recursive
+    ```
 
 * react
 
-```sh
-npm run dev
-```
+    ```sh
+    npm run dev
+    ```
 
 * csharp/shop (C#)
 
-```sh
-dotnet run
-```
+    ```sh
+    dotnet run
+    ```
 
 * Grafana, Loki, Tempo, Cortex
 
-```sh
-cd shopping-docker
-podman-compose up -d
+    ```sh
+    cd shopping-docker
+    podman-compose up -d
 
-# to stop
-podman-compose stop
+    # to stop
+    podman-compose stop
 
-# to start again
-podman-compose start
-```
+    # to start again
+    podman-compose start
+    ```
 
 ## Grafana
 
@@ -66,12 +81,12 @@ podman-compose start
   * Tracing and Metrics are sent over OTLP gRPC
   * Logs are sent over OTLP HTTP using Serilog
 
-```cs
-// csharp/shop/Consts.cs
-public const string OTLP_GRPC_ENDPOINT = "http://localhost:4317/";
-public const string OTLP_HTTP_ENDPOINT = "http://localhost:4318/";
+    ```cs
+    // csharp/shop/Consts.cs
+    public const string OTLP_GRPC_ENDPOINT = "http://localhost:4317/";
+    public const string OTLP_HTTP_ENDPOINT = "http://localhost:4318/";
 
-```
+    ```
 
 * react
   * TBD: Tracing and Logs are sent over OTLP HTTP

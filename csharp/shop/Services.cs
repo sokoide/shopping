@@ -1,9 +1,12 @@
 using Serilog;
 using System.Text.Json;
 using System.Text;
+using Grpc.Core;
 
 class Services
 {
+    private Random rand = new Random();
+
     public void Run(WebApplication app)
     {
         ConfigureShopService(app);
@@ -28,8 +31,8 @@ class Services
 
             return Results.Json(result);
         })
-       .WithName("Reset")
-       .WithOpenApi();
+        .WithName("Reset")
+        .WithOpenApi();
 
         // products
         app.MapGet("/products", () =>
@@ -114,8 +117,8 @@ class Services
                 return await Task.FromResult(Results.Json(new RestResult("Failure", "Checkout service is broken", "")));
             }
         })
-       .WithName("Checkout")
-       .WithOpenApi();
+        .WithName("Checkout")
+        .WithOpenApi();
 
         // login
         app.MapGet("/login", (string username) =>
@@ -127,8 +130,31 @@ class Services
 
             if (flag.Get() == true)
             {
-                Log.Error("delivery service is broken");
-                return Results.Json(new RestResult("Failure", "Login service is broken", ""));
+                int r = rand.Next(100); // r = [0, 100)
+                int st;
+                string msg;
+
+                switch (r)
+                {
+                case int n when (0 <= n && n < 30):
+                    st = StatusCodes.Status400BadRequest;
+                    msg = "Bad login request";
+                    break;
+                case int n when (30 <= n && n < 60):
+                    st = StatusCodes.Status401Unauthorized;
+                    msg = "Unauthorized";
+                    break;
+                case int n when (60 <= n && n < 90):
+                    st = StatusCodes.Status403Forbidden;
+                    msg = "Forbidden";
+                    break;
+                default:
+                    st = StatusCodes.Status500InternalServerError;
+                    msg = "Internal server error";
+                    break;
+                }
+                Log.Error($"{username} login failed, reason: {msg}");
+                return Results.Json(new RestResult("Failure", msg, ""), statusCode: st);
             }
             return Results.Json(new RestResult("Success", "", ""));
         })

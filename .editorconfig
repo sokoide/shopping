@@ -1,23 +1,69 @@
+# top-most EditorConfig file
 root = true
 
-[*.cs]
+# General configuration
+[*.{cs,vb,cpp,h,hpp,js,jsx,ts,tsx}]
+charset = utf-8-bom
 indent_style = space
 indent_size = 4
-charset = utf-8
+insert_final_newline = true
 trim_trailing_whitespace = true
+
+# C# files
+[*.cs]
+# Organize usings
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = true
+
+# Indentation and spacing
+csharp_indent_block_contents = true
+csharp_indent_braces = false
+csharp_indent_case_contents = true
+csharp_indent_case_contents_when_block = true
+csharp_indent_labels = flush_left
+
+# New lines
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_members_in_anonymous_types = true
+
+#  Spacing
+csharp_space_after_cast = true
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_between_method_call_parameter_list_parentheses = false
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+csharp_space_between_parentheses = false
+
+# preserve
+csharp_preserve_single_line_statements = true
+csharp_preserve_single_line_blocks = true
+
+# Naming conventions
+dotnet_naming_rule.private_members_should_be_camel_case.severity = suggestion
+dotnet_naming_rule.private_members_should_be_camel_case.symbols = private_fields
+dotnet_naming_rule.private_members_should_be_camel_case.style = camel_case
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_fields.required_modifiers = readonly
+
+dotnet_naming_style.camel_case.capitalization = camel_case
+
+# File headers
+file_header_template =
+    // <file name>
+    // <author>
+    // <date>
+    // <summary>
+    // <description>
+
+# End of file
+[*.cs]
 insert_final_newline = true
 
-# Additional rules
-csharp_new_line_before_open_brace = all
-csharp_new_line_between_query_expression_clauses = true
-csharp_preserve_single_line_statements = true
-csharp_indent_switch_labels = true
-csharp_indent_case_contents = true
-csharp_indent_labels = flush_left
-csharp_space_before_open_square_brackets = false
-csharp_space_between_square_brackets = false
-csharp_space_around_binary_operators = before_and_after
-csharp_space_after_cast = false
-csharp_space_after_keywords_in_control_flow_statements = true
-csharp_space_between_method_declaration_parameter_list_parentheses = false
-csharp_space_between_method_call_parameter_list_parentheses = false
+# Extra settings for VS Code
+[*.{csproj,props,targets}]
+indent_size = 2

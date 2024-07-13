@@ -9,7 +9,7 @@ public class Consts
     private const string ImageBaseUrl = "http://scottmm.local:15001/";
 
 
-    private static Product[] products = new[]{
+    private static Product[] products = new[] {
         new Product(1, "Mario", 10.0, "Cheerful, mustached Italian plumber known for his red hat and blue overalls, who embarks on adventurous quests to rescue Princess Peach from various villains, primarily Bowser.", "Mario's family", ImageBaseUrl + "static/Slice 1.png"),
         new Product(2, "Luigi", 10.0, "Mario's taller, younger brother, known for his green hat and overalls, who often accompanies Mario on adventures, displaying bravery despite his more timid and cautious nature.", "Mario's family", ImageBaseUrl + "static/Slice 2.png"),
         new Product(3, "Peach", 15.0, "Kind-hearted and regal ruler of the Mushroom Kingdom, often wearing a pink dress and crown, who frequently needs rescuing from villains like Bowser but also showcases her own strength and leadership in various adventures.", "Mario's family", ImageBaseUrl + "static/Slice 3.png"),

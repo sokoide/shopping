@@ -1,6 +1,6 @@
 public class Globals
 {
-    public static string[] Flags = new string[]{
+    public static string[] Flags = new string[] {
         "login","products", "checkout", "delivery",
     };
 
