@@ -5,7 +5,8 @@ import { createContext, useEffect, useState } from "react";
 // global props with the default values
 export const ShopContext = createContext(null);
 
-const baseCsUrl = "http://10.1.196.5:15001";
+// const baseCsUrl = "http://10.1.196.5:15001";
+const baseCsUrl = "http://scottmm.local:15001";
 const productUrl = baseCsUrl + "/products/";
 const checkoutUrl = baseCsUrl + "/checkout/";
 const loginUrl = baseCsUrl + "/login/";
@@ -13,7 +14,7 @@ const serviceStatusUrl = baseCsUrl + "/status/";
 const serviceBreakUrl = baseCsUrl + "/break/";
 const serviceFixUrl = baseCsUrl + "/fix/";
 const resetStatusUrl = baseCsUrl + "/reset/";
-const features : string[] = ["login", "products", "checkout", "delivery"];
+const features: string[] = ["login", "products", "checkout", "delivery"];
 const monkeyTimer: number = -1;
 
 const emptyCart = () => {
@@ -237,7 +238,7 @@ export const ShopContextProvider = (props) => {
     const updateMonkeyTimer = (id: number) => {
         console.log("updateMonkeyTimer(%O)", id);
         setMonkeyTimer(id);
-    }
+    };
 
     const refreshStatus = () => {
         console.log("fetching service status from %O", serviceStatusUrl);
@@ -246,7 +247,7 @@ export const ShopContextProvider = (props) => {
             .then((json) => {
                 setServiceStatus(json);
             });
-    }
+    };
 
     const resetStatus = () => {
         console.log("resetStatus");
@@ -255,7 +256,7 @@ export const ShopContextProvider = (props) => {
             .then((json) => {
                 setServiceStatus(json);
             });
-    }
+    };
 
     const contextValue = {
         items,
