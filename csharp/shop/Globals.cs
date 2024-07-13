@@ -20,6 +20,7 @@ public class Globals
 
     // 0: operational
     // 1: broken
+    // 2: slow
     public static AtomicInteger[] BreakFlags = new AtomicInteger[Flags.Length];
 
     public static void Init()

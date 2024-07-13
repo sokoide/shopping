@@ -12,6 +12,7 @@ const checkoutUrl = baseCsUrl + "/checkout/";
 const loginUrl = baseCsUrl + "/login/";
 const serviceStatusUrl = baseCsUrl + "/status/";
 const serviceBreakUrl = baseCsUrl + "/break/";
+const serviceSlowUrl = baseCsUrl + "/slow/";
 const serviceFixUrl = baseCsUrl + "/fix/";
 const resetStatusUrl = baseCsUrl + "/reset/";
 const features: string[] = ["login", "products", "checkout", "delivery"];
@@ -228,9 +229,13 @@ export const ShopContextProvider = (props) => {
             fetch(serviceFixUrl + feature).then((res) => {
                 console.log("service fix returned %O", res);
             });
-        } else {
+        } else if (status === 1) {
             fetch(serviceBreakUrl + feature).then((res) => {
-                console.log("service fix returned %O", res);
+                console.log("service break returned %O", res);
+            });
+        } else {
+            fetch(serviceSlowUrl + feature).then((res) => {
+                console.log("service slow returned %O", res);
             });
         }
     };

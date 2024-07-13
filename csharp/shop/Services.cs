@@ -48,6 +48,12 @@ class Services
                 int st = StatusCodes.Status500InternalServerError;
                 return Results.Json(new Product[] { }, statusCode: st);
             }
+            else if (flag.Get() == 2)
+            {
+                int sleepMs = rand.Next(1000, 5000);
+                Log.Warning($"product service is {sleepMs} ms delayed");
+                Thread.Sleep(sleepMs);
+            }
             return Results.Json(Consts.GetProducts());
         })
         .WithName("Products")
@@ -61,8 +67,14 @@ class Services
             int flagid = Globals.GetFlagId("checkout");
             AtomicInteger flag = Globals.BreakFlags[flagid];
 
-            if (flag.Get() == 0)
+            if (flag.Get() == 0 || flag.Get() == 2)
             {
+                if (flag.Get() == 2)
+                {
+                    int sleepMs = rand.Next(1000, 5000);
+                    Log.Warning($"checkout service is {sleepMs} ms delayed");
+                    Thread.Sleep(sleepMs);
+                }
                 foreach (var item in req.cartItems)
                 {
                     if (item.Value > 0)
@@ -119,8 +131,8 @@ class Services
                 return await Task.FromResult(Results.Json(new RestResult("Failure", "Checkout service is down", ""), statusCode: st));
             }
         })
-        .WithName("Checkout")
-        .WithOpenApi();
+    .WithName("Checkout")
+    .WithOpenApi();
 
         // login
         app.MapGet("/login", (string username) =>
@@ -129,6 +141,13 @@ class Services
 
             int flagid = Globals.GetFlagId("login");
             AtomicInteger flag = Globals.BreakFlags[flagid];
+
+            if (flag.Get() == 2)
+            {
+                int sleepMs = rand.Next(1000, 5000);
+                Log.Warning($"login service is {sleepMs} ms delayed");
+                Thread.Sleep(sleepMs);
+            }
 
             if (flag.Get() == 1)
             {
@@ -171,8 +190,15 @@ class Services
             int flagid = Globals.GetFlagId("delivery");
             AtomicInteger flag = Globals.BreakFlags[flagid];
 
-            if (flag.Get() == 0)
+            if (flag.Get() == 0 || flag.Get() == 2)
             {
+                if (flag.Get() == 2)
+                {
+                    int sleepMs = rand.Next(1000, 5000);
+                    Log.Warning($"deliery is {sleepMs} ms delayed");
+                    Thread.Sleep(sleepMs);
+                }
+
                 foreach (var item in req.cartItems)
                 {
                     if (item.Value > 0)
@@ -219,6 +245,18 @@ class Services
 
     private void ConfigureBreakHandlers(string feature, WebApplication app)
     {
+        app.MapGet("/fix/" + feature, () =>
+        {
+            int flagid = Globals.GetFlagId(feature);
+            AtomicInteger flag = Globals.BreakFlags[flagid];
+
+            Log.Information("/fix/" + feature);
+            flag.Set(0);
+            return Results.StatusCode(200);
+        })
+        .WithName("fix/" + feature)
+        .WithOpenApi();
+
         app.MapGet("/break/" + feature, () =>
         {
             int flagid = Globals.GetFlagId(feature);
@@ -231,16 +269,16 @@ class Services
         .WithName("break/" + feature)
         .WithOpenApi();
 
-        app.MapGet("/fix/" + feature, () =>
+        app.MapGet("/slow/" + feature, () =>
         {
             int flagid = Globals.GetFlagId(feature);
             AtomicInteger flag = Globals.BreakFlags[flagid];
 
-            Log.Information("/fix/" + feature);
-            flag.Set(0);
+            Log.Information("/slow/" + feature);
+            flag.Set(2);
             return Results.StatusCode(200);
         })
-        .WithName("fix/" + feature)
+        .WithName("slow/" + feature)
         .WithOpenApi();
 
         app.MapGet("/status/" + feature, () =>

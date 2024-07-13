@@ -16,7 +16,7 @@ import Chip from "@mui/material/Chip";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { green, red, pink } from "@mui/material/colors";
+import { green, red, orange, pink } from "@mui/material/colors";
 import { ShopContext } from "@/context/shop-context";
 
 const Monkey = () => {
@@ -48,7 +48,7 @@ const Monkey = () => {
         }
 
         let curStatus = serviceStatus[feature];
-        let newStatus = curStatus === 0 ? 1 : 0;
+        let newStatus = (curStatus + 1) % 3;
         serviceStatus[feature] = newStatus;
         updateServiceStatus(feature, newStatus);
         console.log(
@@ -86,7 +86,7 @@ const Monkey = () => {
             <Grid container spacing={2}>
                 <Grid item xs={8}>
                     <Divider>
-                        <Chip label="Break/Fix Actions" size="small" />
+                        <Chip label="Break/Slow/Fix Actions" size="small" />
                     </Divider>
 
                     <List>
@@ -104,7 +104,7 @@ const Monkey = () => {
                             <ListItemIcon>
                                 <GavelIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Break/Fix Login" />
+                            <ListItemText primary="Break/Slow/Fix Login" />
                         </ListItemButton>
                         <ListItemButton
                             onClick={() => toggleFeature("products")}
@@ -112,7 +112,7 @@ const Monkey = () => {
                             <ListItemIcon>
                                 <GavelIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Break/Fix Product List" />
+                            <ListItemText primary="Break/Slow/Fix Product List" />
                         </ListItemButton>
                         <ListItemButton
                             onClick={() => toggleFeature("checkout")}
@@ -120,7 +120,7 @@ const Monkey = () => {
                             <ListItemIcon>
                                 <GavelIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Break/Fix Checkout" />
+                            <ListItemText primary="Break/Slow/Fix Checkout" />
                         </ListItemButton>
                         <ListItemButton
                             onClick={() => toggleFeature("delivery")}
@@ -128,7 +128,7 @@ const Monkey = () => {
                             <ListItemIcon>
                                 <GavelIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Break/Fix Delivery" />
+                            <ListItemText primary="Break/Slow/Fix Delivery" />
                         </ListItemButton>
                         <ListItemButton onClick={() => reset()}>
                             <ListItemIcon>
@@ -154,8 +154,12 @@ const Monkey = () => {
                                     <CheckCircleOutlineIcon
                                         sx={{ color: green[500] }}
                                     />
+                                ) : serviceStatus["login"] === 2 ? (
+                                    <CheckCircleOutlineIcon
+                                        sx={{ color: orange[500] }}
+                                    />
                                 ) : (
-                                    <HighlightOffIcon
+                                    <CheckCircleOutlineIcon
                                         sx={{ color: red[500] }}
                                     />
                                 )}
@@ -168,8 +172,12 @@ const Monkey = () => {
                                     <CheckCircleOutlineIcon
                                         sx={{ color: green[500] }}
                                     />
+                                ) : serviceStatus["products"] === 2 ? (
+                                    <CheckCircleOutlineIcon
+                                        sx={{ color: orange[500] }}
+                                    />
                                 ) : (
-                                    <HighlightOffIcon
+                                    <CheckCircleOutlineIcon
                                         sx={{ color: red[500] }}
                                     />
                                 )}
@@ -182,8 +190,12 @@ const Monkey = () => {
                                     <CheckCircleOutlineIcon
                                         sx={{ color: green[500] }}
                                     />
+                                ) : serviceStatus["checkout"] === 2 ? (
+                                    <CheckCircleOutlineIcon
+                                        sx={{ color: orange[500] }}
+                                    />
                                 ) : (
-                                    <HighlightOffIcon
+                                    <CheckCircleOutlineIcon
                                         sx={{ color: red[500] }}
                                     />
                                 )}
@@ -196,13 +208,46 @@ const Monkey = () => {
                                     <CheckCircleOutlineIcon
                                         sx={{ color: green[500] }}
                                     />
+                                ) : serviceStatus["delivery"] === 2 ? (
+                                    <CheckCircleOutlineIcon
+                                        sx={{ color: orange[500] }}
+                                    />
                                 ) : (
-                                    <HighlightOffIcon
+                                    <CheckCircleOutlineIcon
                                         sx={{ color: red[500] }}
                                     />
                                 )}
                             </ListItemIcon>
                             <ListItemText primary="Delivery Service" />
+                        </ListItem>
+                    </List>
+                    <Divider>
+                        <Chip label="Legend" size="small" />
+                    </Divider>
+                    <List>
+                        <ListItem>
+                            <ListItemIcon>
+                                <CheckCircleOutlineIcon
+                                    sx={{ color: green[500] }}
+                                />
+                            </ListItemIcon>
+                            <ListItemText primary="Operational" />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemIcon>
+                                <CheckCircleOutlineIcon
+                                    sx={{ color: orange[500] }}
+                                />
+                            </ListItemIcon>
+                            <ListItemText primary="Slow" />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemIcon>
+                                <CheckCircleOutlineIcon
+                                    sx={{ color: red[500] }}
+                                />
+                            </ListItemIcon>
+                            <ListItemText primary="Broken" />
                         </ListItem>
                     </List>
                 </Grid>
