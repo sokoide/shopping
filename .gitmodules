@@ -1,3 +1,3 @@
 [submodule "shopping-docker"]
 	path = shopping-docker
-	url = git@github.com:sokoide/shopping-docker.git
+	url = https://github.com/sokoide/shopping-docker.git

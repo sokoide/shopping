@@ -21,6 +21,12 @@ const baseCsUrl = "http://scottmm.local:15001";
 
 ## How to run
 
+* submodule update
+
+```sh
+git submodule update --init --recursive
+```
+
 * react
 
 ```sh
