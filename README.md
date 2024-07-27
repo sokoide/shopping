@@ -13,25 +13,29 @@
 * vscode
   * configure `EditorConfig for VS Code` plug-in
 
-
-
 ## Configuration
+
+* If you want to use DNS name which is not supported here, change below.
 
 * csharp/shop/Consts.cs
 
     ```cs
+
     // change this line to your local host name of the ASP.NET server
-    private const string ImageBaseUrl = "http://scottmm.local:15001/";
+    // private static string ImageBaseUrl = $"http://{Globals.GetLocalIPAddress()}:15001/";
+    private const string ImageBaseUrl = "http://your-server:15001/";
 
     // add your next.js server's host:port as CORS_ORIGINS
-    public static string[] CORS_ORIGINS = new[] { "http://10.1.196.5:3000", "http://localhost:3000", "http://scottmm.local:3000" };
+    // public static string[] CORS_ORIGINS = new[] { $"http://{Globals.GetLocalIPAddress()}:3000", "http://localhost:3000" };
+    public static string[] CORS_ORIGINS = new[] { "http://your-server:3000", "http://localhost:3000" };
     ```
 
 * react/context/shop-context.tsx
 
     ```tsx
     // change this line to your local host name of the ASP.NET server
-    const baseCsUrl = "http://scottmm.local:15001";
+    // const baseCsUrl = "http://" + window.location.origin.split("://")[1].split(":")[0] + ":15001";
+    const baseCsUrl = "http://your-server:15001";
     ```
 
 ## How to run
