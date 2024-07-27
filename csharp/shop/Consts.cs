@@ -3,10 +3,10 @@ public class Consts
     public const string OTEL_SERVICE_NAME = "Nintenbo-backend";
     public const string OTLP_GRPC_ENDPOINT = "http://localhost:4317/";
     public const string OTLP_HTTP_ENDPOINT = "http://localhost:4318/";
-    public static string[] CORS_ORIGINS = new[] { "http://10.1.196.5:3000", "http://localhost:3000", "http://scottmm.local:3000" };
+    public static string[] CORS_ORIGINS = new[] { $"http://{Globals.GetLocalIPAddress()}:3000", "http://localhost:3000" };
     public const int WEBAPI_PORT = 15001;
-    private const string ImageBaseUrl = "http://10.1.196.5:15001/";
-    // private const string ImageBaseUrl = "http://scottmm.local:15001/";
+    // private const string ImageBaseUrl = "http://localhost:15001/";
+    private static string ImageBaseUrl = $"http://{Globals.GetLocalIPAddress()}:15001/";
 
 
     private static Product[] products = new[] {
