@@ -15,27 +15,29 @@
 
 ## Configuration
 
-* If you want to use DNS name which is not supported here, change below.
+* Please change below,
+
+* react/context/shop-context.tsx
+
+    ```tsx
+    // Required:
+    // change this line to your local host name of the ASP.NET server
+    const baseCsUrl = "http://your-server:15001";
+    ```
 
 * csharp/shop/Consts.cs
 
     ```cs
-
+    // Optional:
+    // If you'd like to use a DNS name,
     // change this line to your local host name of the ASP.NET server
+    //
     // private static string ImageBaseUrl = $"http://{Globals.GetLocalIPAddress()}:15001/";
     private const string ImageBaseUrl = "http://your-server:15001/";
 
     // add your next.js server's host:port as CORS_ORIGINS
     // public static string[] CORS_ORIGINS = new[] { $"http://{Globals.GetLocalIPAddress()}:3000", "http://localhost:3000" };
     public static string[] CORS_ORIGINS = new[] { "http://your-server:3000", "http://localhost:3000" };
-    ```
-
-* react/context/shop-context.tsx
-
-    ```tsx
-    // change this line to your local host name of the ASP.NET server
-    // const baseCsUrl = "http://" + window.location.origin.split("://")[1].split(":")[0] + ":15001";
-    const baseCsUrl = "http://your-server:15001";
     ```
 
 ## How to run
