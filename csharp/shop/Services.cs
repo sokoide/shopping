@@ -37,38 +37,24 @@ class Services
 
         if (flag.Get() == 2)
         {
+            string reason = Reason([
+                new ReasonPercent(50, "Network Issue"),
+                new ReasonPercent(50, "Hardware Failures"),
+            ]);
             int sleepMs = rand.Next(1000, 5000);
-            Log.Warning($"user: {username} login service {sleepMs} ms delayed");
+            Log.Warning($"user: {username} login service {sleepMs} ms delayed due to '{reason}'");
             Thread.Sleep(sleepMs);
         }
 
         if (flag.Get() == 1)
         {
-            int r = rand.Next(100); // r = [0, 100)
-            int st;
-            string msg;
-
-            switch (r)
-            {
-            case int n when (0 <= n && n < 30):
-                st = StatusCodes.Status400BadRequest;
-                msg = "Bad login request";
-                break;
-            case int n when (30 <= n && n < 60):
-                st = StatusCodes.Status401Unauthorized;
-                msg = "Unauthorized";
-                break;
-            case int n when (60 <= n && n < 90):
-                st = StatusCodes.Status403Forbidden;
-                msg = "Forbidden";
-                break;
-            default:
-                st = StatusCodes.Status500InternalServerError;
-                msg = "Internal server error";
-                break;
-            }
-            Log.Error($"user: {username} login failed, reason: {msg}");
-            return Results.Json(new RestResult("Failure", msg, ""), statusCode: st);
+            ReasonStatusCode rs = FailureReason([
+                new ReasonStatusCode(30, StatusCodes.Status400BadRequest, "Bad login request"),
+                new ReasonStatusCode(30, StatusCodes.Status401Unauthorized, "Unauthorized"),
+                new ReasonStatusCode(30, StatusCodes.Status403Forbidden, "Forbidden"),
+            ]);
+            Log.Error($"user: {username} login failed, reason: {rs.Reason}");
+            return Results.Json(new RestResult("Failure", rs.Reason, ""), statusCode: rs.StatusCode);
         }
         return Results.Json(new RestResult("Success", "", ""));
     }
@@ -82,14 +68,20 @@ class Services
 
         if (flag.Get() == 1)
         {
-            Log.Error("product service is down");
-            int st = StatusCodes.Status500InternalServerError;
-            return Results.Json(new Product[] { }, statusCode: st);
+            ReasonStatusCode rs = FailureReason([
+                new ReasonStatusCode(95, StatusCodes.Status500InternalServerError, "Product server is down"),
+            ]);
+            Log.Error($"/products failed. {rs.Reason}");
+            return Results.Json(new Product[] { }, statusCode: rs.StatusCode);
         }
         else if (flag.Get() == 2)
         {
+            string reason = Reason([
+                new ReasonPercent(50, "Network Issue"),
+                new ReasonPercent(50, "Hardware Failures"),
+            ]);
             int sleepMs = rand.Next(1000, 5000);
-            Log.Warning($"product service is {sleepMs} ms delayed");
+            Log.Warning($"product service is {sleepMs} ms delayed due to {reason}");
             Thread.Sleep(sleepMs);
         }
         return Results.Json(Consts.GetProducts());
@@ -106,8 +98,12 @@ class Services
         {
             if (flag.Get() == 2)
             {
+                string reason = Reason([
+                    new ReasonPercent(50, "Too many requests"),
+                    new ReasonPercent(50, "Credit card network slowness"),
+                ]);
                 int sleepMs = rand.Next(1000, 5000);
-                Log.Warning($"user: {req.username} checkout service {sleepMs} ms delayed");
+                Log.Warning($"user: {req.username} checkout service {sleepMs} ms delayed due to {reason}");
                 Thread.Sleep(sleepMs);
             }
             foreach (var item in req.cartItems)
@@ -161,9 +157,12 @@ class Services
         }
         else
         {
-            Log.Error($"user: {req.username} checkout service is down");
-            int st = StatusCodes.Status500InternalServerError;
-            return await Task.FromResult(Results.Json(new RestResult("Failure", "Checkout service is down", ""), statusCode: st));
+            ReasonStatusCode rs = FailureReason([
+                new ReasonStatusCode(50, StatusCodes.Status401Unauthorized, "Credit card not authorized"),
+                new ReasonStatusCode(50, StatusCodes.Status500InternalServerError, "Checkout server is down"),
+            ]);
+            Log.Error($"user: {req.username} /checkout failed. {rs.Reason}");
+            return await Task.FromResult(Results.Json(new RestResult("Failure", rs.Reason, ""), statusCode: rs.StatusCode));
         }
     }
 
@@ -178,8 +177,14 @@ class Services
         {
             if (flag.Get() == 2)
             {
+                string reason = Reason([
+                    new ReasonPercent(20, "Lack of Drivers"),
+                    new ReasonPercent(40, "Traffic Jam"),
+                    new ReasonPercent(20, "Bad Weather"),
+                    new ReasonPercent(20, "Traffic Accident"),
+                ]);
                 int sleepMs = rand.Next(1000, 5000);
-                Log.Warning($"user: {req.username} deliery {sleepMs} ms delayed");
+                Log.Warning($"user: {req.username} delivery {sleepMs} ms delayed due to {reason}");
                 Thread.Sleep(sleepMs);
             }
 
@@ -194,9 +199,12 @@ class Services
         }
         else
         {
-            Log.Error("delivery service is down");
-            int st = StatusCodes.Status500InternalServerError;
-            return await Task.FromResult(Results.Json(new RestResult("Failure", "Delivery service is down", ""), statusCode: st));
+            ReasonStatusCode rs = FailureReason([
+                new ReasonStatusCode(50, StatusCodes.Status500InternalServerError, "Traffic Accident"),
+                new ReasonStatusCode(50, StatusCodes.Status500InternalServerError, "Delivery server is down"),
+            ]);
+            Log.Error($"user: {req.username} /delivery failed. {rs.Reason}");
+            return await Task.FromResult(Results.Json(new RestResult("Failure", rs.Reason, ""), statusCode: rs.StatusCode));
         }
     }
 
@@ -311,5 +319,55 @@ class Services
         })
         .WithName("status/" + feature)
         .WithOpenApi();
+    }
+
+
+    class ReasonPercent
+    {
+        public int Percent;
+        public string Reason;
+
+        public ReasonPercent(int percent, string reason)
+        {
+            Percent = percent;
+            Reason = reason;
+        }
+    }
+
+    class ReasonStatusCode
+    {
+        public int Percent;
+        public int StatusCode;
+        public string Reason;
+
+        public ReasonStatusCode(int percent, int statuscode, string reason)
+        {
+            Percent = percent;
+            StatusCode = statuscode;
+            Reason = reason;
+        }
+    }
+
+    private string Reason(ReasonPercent[] reasons)
+    {
+        int r = rand.Next(100); // r = [0, 100)
+
+        foreach (ReasonPercent rp in reasons)
+        {
+            if (r < rp.Percent) return rp.Reason;
+            r -= rp.Percent;
+        }
+        return "Unknown Reason";
+    }
+    private ReasonStatusCode FailureReason(ReasonStatusCode[] reasons)
+    {
+        int r = rand.Next(100); // r = [0, 100)
+
+        foreach (ReasonStatusCode rs in reasons)
+        {
+            if (r < rs.Percent) return rs;
+            r -= rs.Percent;
+        }
+        return new ReasonStatusCode(0, StatusCodes.Status500InternalServerError, "Internal Server Error");
     }
 }
