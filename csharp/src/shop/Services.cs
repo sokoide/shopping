@@ -2,6 +2,7 @@ using Serilog;
 using System.Text.Json;
 using System.Text;
 using System.ComponentModel;
+using System.Net;
 
 class Services
 {
@@ -114,6 +115,21 @@ class Services
                     Log.Information($"user: {req.username} bought productid:{item.Key}, product:{Consts.GetProductName(item.Key)}, quantity:{item.Value}");
                 }
             };
+
+            // record the order in MongoDB
+            string items = JsonSerializer.Serialize(req.cartItems);
+            var order = new Order(req.username, items);
+            try
+            {
+                Mongo.Instance.InsertOrder(order);
+            }
+            catch (Exception exc)
+            {
+                Log.Error($"failed to insert an order into MongoDB. exception:{exc}");
+                return Results.Json(new RestResult("Failure", "failed to record an order", "MongoDB failure"));
+            }
+
+
             // ship the products
             using (HttpClient client = new HttpClient())
             {

@@ -12,8 +12,8 @@ public class Order
     [JsonPropertyName("title")]
     public string Title { get; set; }
 
-    [JsonPropertyName("products")]
-    public Product[] Products { get; set; }
+    [JsonPropertyName("items")]
+    public string Items { get; set; }
 
     [BsonElement("created_at")]
     public DateTime CreatedAt { get; set; }
@@ -21,10 +21,10 @@ public class Order
     [BsonElement("updated_at")]
     public DateTime UpdatedAt { get; set; }
 
-    public Order(string title)
+    public Order(string title, string items = "")
     {
         Title = title;
-        Products = new Product[] { };
+        Items = items;
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = CreatedAt;
     }

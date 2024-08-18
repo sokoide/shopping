@@ -24,7 +24,12 @@ public class Mongo
 
     private IMongoDatabase getDB()
     {
-        var client = new MongoClient(ConnectionString);
+        var settings = MongoClientSettings.FromUrl(new MongoUrl(ConnectionString));
+        settings.ConnectTimeout = TimeSpan.FromSeconds(5);
+        settings.ServerSelectionTimeout = TimeSpan.FromSeconds(5);
+        settings.MaxConnectionPoolSize = 10;
+
+        var client = new MongoClient(settings);
         return client.GetDatabase(DB);
     }
 
