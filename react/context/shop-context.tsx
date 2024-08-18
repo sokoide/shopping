@@ -68,6 +68,20 @@ const getServiceStatus = () => {
     return serviceStatus;
 };
 
+const getFeatureId = (feature: String) : number => {
+    switch(feature){
+        case "login":
+            return 0;
+        case "products":
+            return 1;
+        case "checkout":
+            return 2;
+        case "deliver":
+            return 3;
+    }
+    return -1;
+}
+
 var initialized: boolean = false;
 
 export const ShopContextProvider = (props) => {
@@ -224,16 +238,18 @@ export const ShopContextProvider = (props) => {
         console.log("updateService status %O=%O", feature, status);
         setServiceStatus((prev) => ({ ...prev, feature: status }));
 
+        let featureIdStr = String(getFeatureId(feature));
+
         if (status === 0) {
-            fetch(serviceFixUrl + feature).then((res) => {
+            fetch(serviceFixUrl + featureIdStr).then((res) => {
                 console.log("service fix returned %O", res);
             });
         } else if (status === 1) {
-            fetch(serviceBreakUrl + feature).then((res) => {
+            fetch(serviceBreakUrl + featureIdStr).then((res) => {
                 console.log("service break returned %O", res);
             });
         } else {
-            fetch(serviceSlowUrl + feature).then((res) => {
+            fetch(serviceSlowUrl + featureIdStr).then((res) => {
                 console.log("service slow returned %O", res);
             });
         }

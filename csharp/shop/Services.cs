@@ -1,6 +1,7 @@
 using Serilog;
 using System.Text.Json;
 using System.Text;
+using System.ComponentModel;
 
 class Services
 {
@@ -265,48 +266,46 @@ class Services
 
     private void ConfigureBreakHandlers(string feature, WebApplication app)
     {
-        app.MapGet("/fix/" + feature, () =>
+        int flagid = Globals.GetFlagId(feature);
+
+        app.MapGet("/fix/" + flagid, () =>
         {
-            int flagid = Globals.GetFlagId(feature);
             AtomicInteger flag = Globals.BreakFlags[flagid];
 
-            Log.Information("/fix/" + feature);
+            Log.Information("/fix/" + flagid);
             flag.Set(0);
             return Results.StatusCode(200);
         })
-        .WithName("fix/" + feature)
+        .WithName("fix/" + flagid)
         .WithOpenApi();
 
-        app.MapGet("/break/" + feature, () =>
+        app.MapGet("/break/" + flagid, () =>
         {
-            int flagid = Globals.GetFlagId(feature);
             AtomicInteger flag = Globals.BreakFlags[flagid];
 
-            Log.Information("/break/" + feature);
+            Log.Information("/break/" + flagid);
             flag.Set(1);
             return Results.StatusCode(200);
         })
-        .WithName("break/" + feature)
+        .WithName("break/" + flagid)
         .WithOpenApi();
 
-        app.MapGet("/slow/" + feature, () =>
+        app.MapGet("/slow/" + flagid, () =>
         {
-            int flagid = Globals.GetFlagId(feature);
             AtomicInteger flag = Globals.BreakFlags[flagid];
 
-            Log.Information("/slow/" + feature);
+            Log.Information("/slow/" + flagid);
             flag.Set(2);
             return Results.StatusCode(200);
         })
-        .WithName("slow/" + feature)
+        .WithName("slow/" + flagid)
         .WithOpenApi();
 
-        app.MapGet("/status/" + feature, () =>
+        app.MapGet("/status/" + flagid, () =>
         {
-            int flagid = Globals.GetFlagId(feature);
             AtomicInteger flag = Globals.BreakFlags[flagid];
 
-            Log.Information("/status/" + feature);
+            Log.Information("/status/" + flagid);
             int value = flag.Get();
             if (value == 0)
             {
@@ -317,7 +316,7 @@ class Services
                 return Results.Ok("Operational");
             }
         })
-        .WithName("status/" + feature)
+        .WithName("status/" + flagid)
         .WithOpenApi();
     }
 

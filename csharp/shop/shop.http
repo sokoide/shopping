@@ -12,30 +12,30 @@ Accept: application/json
 GET {{shop_HostAddress}}/login?username="sokoide@ms.com"
 Accept: application/json
 ###
-GET {{shop_HostAddress}}/break/login/
+GET {{shop_HostAddress}}/break/0/
 Accept: application/json
 ###
-GET {{shop_HostAddress}}/fix/login/
+GET {{shop_HostAddress}}/fix/0/
 Accept: application/json
 ###
-GET {{shop_HostAddress}}/status/login/
+GET {{shop_HostAddress}}/status/0/
 Accept: application/json
 
 ### Products
 GET {{shop_HostAddress}}/products/
 Accept: application/json
 ###
-GET {{shop_HostAddress}}/break/products/
+GET {{shop_HostAddress}}/break/1/
 Accept: application/json
 ###
-GET {{shop_HostAddress}}/fix/products/
+GET {{shop_HostAddress}}/fix/1/
 Accept: application/json
 ###
-GET {{shop_HostAddress}}/status/products/
+GET {{shop_HostAddress}}/status/1/
 Accept: application/json
 
 ### Chekcout
-POST {{shop_HostAddress}}/checkout/
+POST {{shop_HostAddress}}/2/
 Content-Type: application/json
 Accept: application/json
 
@@ -45,24 +45,24 @@ Accept: application/json
     "3": 4
 }
 ###
-GET {{shop_HostAddress}}/break/checkout/
+GET {{shop_HostAddress}}/break/2/
 Accept: application/json
 ###
-GET {{shop_HostAddress}}/fix/checkout/
+GET {{shop_HostAddress}}/fix/2/
 Accept: application/json
 ###
-GET {{shop_HostAddress}}/status/checkout/
+GET {{shop_HostAddress}}/status/2/
 Accept: application/json
 
 ### Delivery
-GET {{shop_HostAddress}}/delivery/
+GET {{shop_HostAddress}}/3/
 Accept: application/json
 ###
-GET {{shop_HostAddress}}/break/delivery/
+GET {{shop_HostAddress}}/break/3/
 Accept: application/json
 ###
-GET {{shop_HostAddress}}/fix/delivery/
+GET {{shop_HostAddress}}/fix/3/
 Accept: application/json
 ###
-GET {{shop_HostAddress}}/status/delivery/
+GET {{shop_HostAddress}}/status/3/
 Accept: application/json
