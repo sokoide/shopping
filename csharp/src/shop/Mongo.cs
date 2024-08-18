@@ -1,64 +1,47 @@
 using MongoDB.Driver;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using System;
 
 public class Mongo
 {
-    const string ConnectionString = "mongodb://root:password@localhost/?retryWrites=true&w=majority";
-    private string DB = "shop";
+    private const string ConnectionString = "mongodb://root:password@localhost/?retryWrites=true&w=majority";
+    private string _databaseName = "shop";
 
-    static readonly Mongo instance = new Mongo();
+    private static readonly Lazy<Mongo> _instance = new Lazy<Mongo>(() => new Mongo());
 
-    public static Mongo Instance { get { return instance; } }
+    public static Mongo Instance => _instance.Value;
 
     private Mongo() { }
 
-    public void SetUnittest()
-    {
-        DB = "shop_unittest";
-    }
-    public void ResetUnittest()
-    {
-        DB = "shop";
-    }
+    public void SetUnittestDatabase() => _databaseName = "shop_unittest";
+    public void ResetProductionDatabase() => _databaseName = "shop";
 
-    private IMongoDatabase getDB()
+    private IMongoDatabase GetDatabase()
     {
         var settings = MongoClientSettings.FromUrl(new MongoUrl(ConnectionString));
         settings.ConnectTimeout = TimeSpan.FromSeconds(5);
         settings.ServerSelectionTimeout = TimeSpan.FromSeconds(5);
         settings.MaxConnectionPoolSize = 10;
 
-        var client = new MongoClient(settings);
-        return client.GetDatabase(DB);
+        return new MongoClient(settings).GetDatabase(_databaseName);
     }
+
+    private IMongoCollection<Order> GetOrdersCollection() => GetDatabase().GetCollection<Order>("orders");
 
     public Order? FindOrder(string title)
     {
-        var collection = getDB().GetCollection<BsonDocument>("orders");
-        var filter = Builders<BsonDocument>.Filter.Eq("Title", title);
-        var document = collection.Find(filter).FirstOrDefault();
-
-        if (document == null) return null;
-        return BsonSerializer.Deserialize<Order>(document);
+        var filter = Builders<Order>.Filter.Eq(o => o.Title, title);
+        return GetOrdersCollection().Find(filter).FirstOrDefault();
     }
 
-    public void InsertOrder(Order order)
-    {
-        var collection = getDB().GetCollection<BsonDocument>("orders");
-        collection.InsertOne(order.ToBsonDocument());
-    }
+    public void InsertOrder(Order order) => GetOrdersCollection().InsertOne(order);
 
-    public void DeleteAllOrders()
-    {
-        var collection = getDB().GetCollection<BsonDocument>("orders");
-        collection.DeleteMany(FilterDefinition<BsonDocument>.Empty);
-    }
+    public void DeleteAllOrders() => GetOrdersCollection().DeleteMany(Builders<Order>.Filter.Empty);
 
     public void DeleteOrders(string title)
     {
-        var collection = getDB().GetCollection<BsonDocument>("orders");
-        var filter = Builders<BsonDocument>.Filter.Eq("Title", title);
-        collection.DeleteMany(filter);
+        var filter = Builders<Order>.Filter.Eq(o => o.Title, title);
+        GetOrdersCollection().DeleteMany(filter);
     }
 }

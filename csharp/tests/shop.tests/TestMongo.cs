@@ -6,14 +6,14 @@ public class TestMongo : IDisposable
 
     public TestMongo()
     {
-        Mongo.Instance.SetUnittest();
+        Mongo.Instance.SetUnittestDatabase();
         Mongo.Instance.DeleteAllOrders();
     }
 
     public void Dispose()
     {
         Mongo.Instance.DeleteAllOrders();
-        Mongo.Instance.ResetUnittest();
+        Mongo.Instance.ResetProductionDatabase();
     }
 
     [Fact]
