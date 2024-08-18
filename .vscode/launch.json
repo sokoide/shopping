@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/csharp/shop/bin/Debug/net8.0/shop.dll",
+            "program": "${workspaceFolder}/csharp/src/shop/bin/Debug/net8.0/shop.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/csharp/shop",
+            "cwd": "${workspaceFolder}/csharp/src/shop",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",

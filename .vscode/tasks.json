@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/csharp/shop/shop.csproj" // Update with your project file
+                "${workspaceFolder}/csharp/src/shop/shop.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
